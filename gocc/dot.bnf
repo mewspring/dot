@@ -90,6 +90,7 @@ id
 	: _letter { _letter | _decimal_digit }
 	| _int_lit
 	| _string_lit
+	| _html_lit
 ;
 
 _int_lit
@@ -111,7 +112,22 @@ _escaped_char : '\\' ( _unicode_char | '"' | '\\' ) ;
 _char         : _unicode_char | _escaped_char ;
 _string_lit   : '"' { _char } '"' ;
 
-// TODO: Check which whitespace characters are allowed to separate tokens.
+// An arbitrary HTML character except null (0x00), left angle bracket (0x3C) and
+// right angle bracket (0x3E).
+_html_char
+	// skip null (0x00)
+	: '\x01' - '\x3B'
+	// skip left angle bracket (0x3C)
+	| '\x3D'
+	// skip right angle bracket (0x3E)
+	| '\x3F' - '\xFF'
+;
+
+_html_chars : { _html_char } ;
+
+_html_tag : '<' ( _html_chars ) '>' ;
+
+_html_lit : '<' { _html_chars | _html_tag } '>' ;
 
 // Comments
 
@@ -122,6 +138,8 @@ _line_comment
 
 _block_comment : '/' '*' { . | '*' } '*' '/' ;
 !comment       : _line_comment | _block_comment ;
+
+// TODO: Check which whitespace characters are allowed to separate tokens.
 
 !whitespace : ' ' | '\t' | '\v' | '\f' | '\r' | '\n' ;
 
