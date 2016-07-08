@@ -64,6 +64,7 @@ _ascii_letter : 'a' - 'z' | 'A' - 'Z' ;
 _ascii_digit  : '0' - '9' ;
 _letter        : _ascii_letter | '_' ;
 _decimal_digit : _ascii_digit ;
+_decimals      : _decimal_digit { _decimal_digit } ;
 
 // An ID is one of the following:
 //
@@ -78,11 +79,17 @@ _decimal_digit : _ascii_digit ;
 //    4) an HTML string (<...>).
 
 // TODO: Check what \200-\377 means in the 1st representation of IDs.
-// TODO: Add support for the 2nd, 3rd and 4th representation of IDs.
+// TODO: Add support for the 4th representation of IDs.
 
 id
 	: _letter { _letter | _decimal_digit }
+	| _int_lit
 	| _string_lit
+;
+
+_int_lit
+	: [ '-' ] '.' _decimals
+	| [ '-' ] _decimals [ '.' { _decimal_digit } ]
 ;
 
 _escaped_char : '\\' 'n' ;
