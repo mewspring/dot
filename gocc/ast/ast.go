@@ -9,6 +9,13 @@ package ast
 // === [ Graphs ] ==============================================================
 
 // A Graph represents a directed or an undirected graph.
+//
+// Examples.
+//
+//    digraph G {
+//       A -> {B C}
+//       B -> C
+//    }
 type Graph struct {
 	// Strict graph; multi-edges forbidden.
 	Strict bool
@@ -120,6 +127,10 @@ type Attr struct {
 // --- [ Subgraph ] ------------------------------------------------------------
 
 // A Subgraph represents a subgraph vertex.
+//
+// Examples.
+//
+//    subgraph S {A B C}
 type Subgraph struct {
 	// Subgraph ID; or empty if none.
 	ID string
@@ -149,6 +160,11 @@ type Vertex interface {
 // --- [ Node identifier ] -----------------------------------------------------
 
 // A NodeID represents a node vertex.
+//
+// Examples.
+//
+//    A
+//    A:nw
 type NodeID struct {
 	// Node ID.
 	ID string
@@ -163,6 +179,11 @@ type Port struct {
 	// Compass point; or empty if none.
 	CompassPoint string
 }
+
+// TODO: Add enum for CompassPoint?
+//
+//    CompassPoint
+//       : "n" | "ne" | "e" | "se" | "s" | "sw" | "w" | "nw" | "c" | "_"
 
 // isVertex ensures that only vertices can be assigned to the Vertex interface.
 func (*NodeID) isVertex()   {}
