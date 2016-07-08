@@ -3,6 +3,8 @@
 package astx
 
 import (
+	"strings"
+
 	"github.com/graphism/dot/gocc/ast"
 	"github.com/graphism/dot/gocc/token"
 	"github.com/mewkiz/pkg/errutil"
@@ -220,8 +222,23 @@ func NewID(id interface{}) (string, error) {
 	if !ok {
 		return "", errutil.Newf("invalid identifier type; expected *token.Token, got %T", id)
 	}
-	// TODO: Convert \" to "
-	// TODO: Handle newline backslash C convention.
+	s := string(i.Lit)
+
+	// In quoted strings in DOT, the only escaped character is double-quote (").
+	// That is, in quoted strings, the dyad \" is converted to "; all other
+	// characters are left unchanged. In particular, \\ remains \\.
+	//
+	// Convert \" to "
+	s = strings.Replace(s, `\"`, `"`, -1)
+
+	// As another aid for readability, dot allows double-quoted strings to span
+	// multiple physical lines using the standard C convention of a backslash
+	// immediately preceding a newline character.
+	//
+	// Strip "\\\n" sequences.
+	s = strings.Replace(s, "\\\n", "", -1)
+
 	// TODO: Add support for concatenated using a '+' operator.
-	return string(i.Lit), nil
+
+	return s, nil
 }

@@ -49,20 +49,26 @@ strict
 	| 'S' 'T' 'R' 'I' 'C' 'T'
 ;
 
-// An arbitrary ASCII character except null (0x00), new lines (0x0A), carriage
-// return (0x0D), apostrophe (0x27), double quote (0x22) and backslash (0x5C).
+// An arbitrary ASCII character except null (0x00), double quote (0x22) and
+// backslash (0x5C).
 _ascii_char
-	: '\x01' - '\x09'
-	| '\x0B' - '\x0C'
-	| '\x0E' - '\x21'
-	| '\x23' - '\x26'
-	| '\x28' - '\x5B'
+	// skip null (0x00)
+	: '\x01' - '\x21'
+	// skip double quote (0x22)
+	| '\x23' - '\x5B'
+	// skip backslash (0x5C)
 	| '\x5D' - '\x7F'
 ;
 
-_ascii_letter : 'a' - 'z' | 'A' - 'Z' ;
-_ascii_digit  : '0' - '9' ;
-_letter        : _ascii_letter | '_' ;
+_unicode_char
+	: _ascii_char
+	| _unicode_byte
+;
+
+_ascii_letter  : 'a' - 'z' | 'A' - 'Z' ;
+_ascii_digit   : '0' - '9' ;
+_unicode_byte  : '\x80' -  '\xFF' ;
+_letter        : _ascii_letter | _unicode_byte | '_' ;
 _decimal_digit : _ascii_digit ;
 _decimals      : _decimal_digit { _decimal_digit } ;
 
@@ -78,7 +84,6 @@ _decimals      : _decimal_digit { _decimal_digit } ;
 //
 //    4) an HTML string (<...>).
 
-// TODO: Check what \200-\377 means in the 1st representation of IDs.
 // TODO: Add support for the 4th representation of IDs.
 
 id
@@ -102,8 +107,8 @@ _int_lit
 
 // In addition, double-quoted strings can be concatenated using a '+' operator.
 
-_escaped_char : '\\' ( '"' | _ascii_char | '\'' | '\\' ) ;
-_char         : _ascii_char | '\'' | _escaped_char ;
+_escaped_char : '\\' ( _unicode_char | '"' | '\\' ) ;
+_char         : _unicode_char | _escaped_char ;
 _string_lit   : '"' { _char } '"' ;
 
 // TODO: Check which whitespace characters are allowed to separate tokens.
