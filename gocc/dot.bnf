@@ -134,7 +134,9 @@ _html_tag : '<' ( _html_chars ) '>' ;
 
 _html_lit : '<' { _html_chars | _html_tag } '>' ;
 
-// Comments
+// The language supports C++-style comments: /* */ and //. In addition, a line
+// beginning with a '#' character is considered a line output from a C
+// preprocessor (e.g., # 34 to indicate line 34 ) and discarded.
 
 _line_comment
 	: '/' '/' { . } '\n'
