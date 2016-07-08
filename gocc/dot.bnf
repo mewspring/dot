@@ -69,7 +69,12 @@ _unicode_char
 
 _ascii_letter  : 'a' - 'z' | 'A' - 'Z' ;
 _ascii_digit   : '0' - '9' ;
-_unicode_byte  : '\x80' -  '\xFF' ;
+
+_unicode_byte
+	: '\u0080' - '\uFFFC'
+	// skip invalid code point (\uFFFD)
+	| '\uFFFE' - '\U0010FFFF'
+;
 _letter        : _ascii_letter | _unicode_byte | '_' ;
 _decimal_digit : _ascii_digit ;
 _decimals      : _decimal_digit { _decimal_digit } ;
