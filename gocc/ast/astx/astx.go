@@ -9,19 +9,19 @@ import "github.com/graphism/dot/gocc/ast"
 // NewGraph returns a new graph based on the given graph strictness, direction,
 // ID and statements.
 func NewGraph(strict, directed, id, stmts interface{}) (*ast.Graph, error) {
-	panic("not yet implemented")
+	panic("astx.NewGraph: not yet implemented")
 }
 
 // === [ Statements ] ==========================================================
 
 // NewStmtList returns a new statement list based on the given statement.
 func NewStmtList(stmt interface{}) ([]ast.Stmt, error) {
-	panic("not yet implemented")
+	panic("astx.NewStmtList: not yet implemented")
 }
 
 // AppendStmt appends stmt to the given statement list.
 func AppendStmt(list, stmt interface{}) ([]ast.Stmt, error) {
-	panic("not yet implemented")
+	panic("astx.AppendStmt: not yet implemented")
 }
 
 // --- [ Node statement ] ------------------------------------------------------
@@ -29,7 +29,7 @@ func AppendStmt(list, stmt interface{}) ([]ast.Stmt, error) {
 // NewNodeStmt returns a new node statement based on the given node ID and
 // attributes.
 func NewNodeStmt(nodeID, attrs interface{}) (*ast.NodeStmt, error) {
-	panic("not yet implemented")
+	panic("astx.NewNodeStmt: not yet implemented")
 }
 
 // --- [ Edge statement ] ------------------------------------------------------
@@ -37,13 +37,13 @@ func NewNodeStmt(nodeID, attrs interface{}) (*ast.NodeStmt, error) {
 // NewEdgeStmt returns a new edge statement based on the given source vertex,
 // outgoing edge and attributes.
 func NewEdgeStmt(from, to, attrs interface{}) (*ast.EdgeStmt, error) {
-	panic("not yet implemented")
+	panic("astx.NewEdgeStmt: not yet implemented")
 }
 
 // NewEdge returns a new edge based on the given edge direction, vertex and
 // outgoing edge.
 func NewEdge(directed, vertex, to interface{}) (*ast.EdgeStmt, error) {
-	panic("not yet implemented")
+	panic("astx.NewEdge: not yet implemented")
 }
 
 // --- [ Attribute statement ] -------------------------------------------------
@@ -51,7 +51,7 @@ func NewEdge(directed, vertex, to interface{}) (*ast.EdgeStmt, error) {
 // NewAttrStmt returns a new attribute statement based on the given graph
 // component and attributes.
 func NewAttrStmt(component, attrs interface{}) (*ast.AttrStmt, error) {
-	panic("not yet implemented")
+	panic("astx.NewAttrStmt: not yet implemented")
 }
 
 // TODO: Add AttrList.
@@ -60,7 +60,7 @@ func NewAttrStmt(component, attrs interface{}) (*ast.AttrStmt, error) {
 
 // NewAttr returns a new attribute based on the given key-value pair.
 func NewAttr(key, value interface{}) (*ast.Attr, error) {
-	panic("not yet implemented")
+	panic("astx.NewAttr: not yet implemented")
 }
 
 // --- [ Subgraph ] ------------------------------------------------------------
@@ -68,7 +68,7 @@ func NewAttr(key, value interface{}) (*ast.Attr, error) {
 // NewSubgraph returns a new subgraph based on the given subgraph ID and
 // statements.
 func NewSubgraph(id, stmts interface{}) (*ast.Subgraph, error) {
-	panic("not yet implemented")
+	panic("astx.NewSubgraph: not yet implemented")
 }
 
 // === [ Vertices ] ============================================================
@@ -77,7 +77,7 @@ func NewSubgraph(id, stmts interface{}) (*ast.Subgraph, error) {
 
 // NewNodeID returns a new node ID based on the given node id and port.
 func NewNodeID(id, port interface{}) (*ast.NodeID, error) {
-	panic("not yet implemented")
+	panic("astx.NewNodeID: not yet implemented")
 }
 
 // NewPort returns a new port based on the given id and compass point.
@@ -88,12 +88,12 @@ func NewPort(id, compassPoint interface{}) (*ast.Port, error) {
 	// The following strings are valid compass points:
 	//
 	//    "n", "ne", "e", "se", "s", "sw", "w", "nw", "c" and "_"
-	panic("not yet implemented")
+	panic("astx.n: not yet implemented")
 }
 
 // === [ Identifiers ] =========================================================
 
 // NewID returns a new identifier based on the given ID token.
 func NewID(id interface{}) (string, error) {
-	panic("not yet implemented")
+	panic("astx.NewID: not yet implemented")
 }

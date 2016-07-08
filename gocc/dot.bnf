@@ -71,6 +71,10 @@ _decimal_digit : _ascii_digit ;
 
 id : _letter { _letter | _decimal_digit } ;
 
+// TODO: Check which whitespace characters are allowed to separate tokens.
+
+!whitespace : ' ' | '\t' | '\v' | '\f' | '\r' | '\n' ;
+
 // ### [ Syntax ] ##############################################################
 
 << import (
