@@ -32,6 +32,7 @@ graphx
 digraph
 	: 'd' 'i' 'g' 'r' 'a' 'p' 'h'
 	| 'D' 'i' 'g' 'r' 'a' 'p' 'h'
+	| 'd' 'i' 'G' 'r' 'a' 'p' 'h'
 	| 'D' 'i' 'G' 'r' 'a' 'p' 'h'
 	| 'D' 'I' 'G' 'R' 'A' 'P' 'H'
 ;
@@ -39,6 +40,7 @@ digraph
 subgraph
 	: 's' 'u' 'b' 'g' 'r' 'a' 'p' 'h'
 	| 'S' 'u' 'b' 'g' 'r' 'a' 'p' 'h'
+	| 's' 'u' 'b' 'G' 'r' 'a' 'p' 'h'
 	| 'S' 'u' 'b' 'G' 'r' 'a' 'p' 'h'
 	| 'S' 'U' 'B' 'G' 'R' 'A' 'P' 'H'
 ;
@@ -83,8 +85,6 @@ _decimals      : _decimal_digit { _decimal_digit } ;
 //       (\")1;
 //
 //    4) an HTML string (<...>).
-
-// TODO: Add support for the 4th representation of IDs.
 
 id
 	: _letter { _letter | _decimal_digit }
