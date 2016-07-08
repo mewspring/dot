@@ -10,6 +10,31 @@ import (
 	"github.com/mewkiz/pkg/errutil"
 )
 
+// === [ File ] ================================================================
+
+// NewFile returns a new file based on the given graph.
+func NewFile(graph interface{}) (*ast.File, error) {
+	g, ok := graph.(*ast.Graph)
+	if !ok {
+		return nil, errutil.Newf("invalid graph type; expected *ast.Graph, got %T", graph)
+	}
+	return &ast.File{Graphs: []*ast.Graph{g}}, nil
+}
+
+// AppendGraph appends graph to the given file.
+func AppendGraph(file, graph interface{}) (*ast.File, error) {
+	f, ok := file.(*ast.File)
+	if !ok {
+		return nil, errutil.Newf("invalid file type; expected *ast.File, got %T", file)
+	}
+	g, ok := graph.(*ast.Graph)
+	if !ok {
+		return nil, errutil.Newf("invalid graph type; expected *ast.Graph, got %T", graph)
+	}
+	f.Graphs = append(f.Graphs, g)
+	return f, nil
+}
+
 // === [ Graphs ] ==============================================================
 
 // NewGraph returns a new graph based on the given graph strictness, direction,

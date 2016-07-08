@@ -6,6 +6,14 @@
 // Graphviz DOT graphs.
 package ast
 
+// === [ File ] ================================================================
+
+// A File represents a DOT file.
+type File struct {
+	// Graphs.
+	Graphs []*Graph
+}
+
 // === [ Graphs ] ==============================================================
 
 // A Graph represents a directed or an undirected graph.
