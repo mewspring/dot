@@ -2,7 +2,7 @@
 //
 // http://www.graphviz.org/doc/info/lang.html
 
-// Tokens
+// ### [ Tokens ] ##############################################################
 
 // The keywords node, edge, graph, digraph, subgraph, and strict are case-
 // independent.
@@ -78,12 +78,14 @@ edgeop
 	| '-' '>'
 ;
 
-// Syntax
+// ### [ Syntax ] ##############################################################
+
+// === [ Graphs ] ==============================================================
 
 // Graph : [ "strict" ] ( "graph" | "digraph" ) [ ID ] "{" StmtList "}"
 
 Graph
-	: OptStrict GraphType OptID "{" StmtList "}"
+	: OptStrict Directed OptID "{" StmtList "}"
 ;
 
 OptStrict
@@ -91,7 +93,7 @@ OptStrict
 	| strict
 ;
 
-GraphType
+Directed
 	: graphx
 	| digraph
 ;
@@ -100,6 +102,8 @@ OptID
 	: empty
 	| id
 ;
+
+// === [ Statements ] ==========================================================
 
 // StmtList : [ Stmt [ ";" ] StmtList ]
 
@@ -128,21 +132,106 @@ OptSemi
 	| ";"
 ;
 
+// --- [ Node statement ] ------------------------------------------------------
+
 // NodeStmt : NodeID [ AttrList ]
 
 NodeStmt
 	: NodeID OptAttrList
 ;
 
+// --- [ Edge statement ] ------------------------------------------------------
+
+// EdgeStmt : ( NodeID | Subgraph ) Edge [ AttrList ]
+
+EdgeStmt
+	: Vertex Edge OptAttrList
+;
+
+// Edge : edgeop ( NodeID | Subgraph ) [ Edge ]
+
+Edge
+	: edgeop Vertex OptEdge
+;
+
+OptEdge
+	: empty
+	| Edge
+;
+
+// --- [ Attribute statement ] -------------------------------------------------
+
+// AttrStmt : ( "graph" | "node" | "edge" ) AttrList
+
+AttrStmt
+	: Component AttrList
+;
+
+Component
+	: graphx
+	| node
+	| edge
+;
+
+// AttrList : "[" [ AList ] "]" [ AttrList ]
+
+AttrList
+	: "[" OptAList "]" OptAttrList
+;
+
+OptAttrList
+	: empty
+	| AttrList
+;
+
+// AList : Attr [ (";" | ",") ] [ AList ]
+
+AList
+	: Attr OptSep OptAList
+;
+
+OptAList
+	: empty
+	| AList
+;
+
+OptSep
+	: empty
+	| ";"
+	| ","
+;
+
+// --- [ Attribute ] -----------------------------------------------------------
+
+Attr
+	: id "=" id
+;
+
+// --- [ Subgraph ] ------------------------------------------------------------
+
+// Subgraph : [ "subgraph" [ id ] ] "{" StmtList "}"
+
+Subgraph
+	: OptSubgraphID "{" StmtList "}"
+;
+
+OptSubgraphID
+	: subgraph OptID
+;
+
+// === [ Vertices ] ============================================================
+
+Vertex
+	: NodeID
+	| Subgraph
+;
+
+// --- [ Node identifier ] -----------------------------------------------------
+
 // NodeID : ID [ Port ]
 
 NodeID
 	: id OptPort
-;
-
-OptPort
-	: empty
-	| Port
 ;
 
 // Port
@@ -161,74 +250,7 @@ Port
 	| ":" id ":" id
 ;
 
-OptAttrList
+OptPort
 	: empty
-	| AttrList
-;
-
-// AttrList : "[" [ AList ] "]" [ AttrList ]
-
-AttrList
-	: "[" OptAList "]" OptAttrList
-;
-
-OptAList
-	: empty
-	| AList
-;
-
-// AList : Attr [ (";" | ",") ] [ AList ]
-
-AList
-	: Attr OptSep OptAList
-;
-
-Attr
-	: id "=" id
-;
-
-OptSep
-	: empty
-	| ";"
-	| ","
-;
-
-// EdgeStmt : ( NodeID | Subgraph ) EdgeRHS [ AttrList ]
-
-EdgeStmt
-	: Vertex EdgeRHS OptAttrList
-;
-
-Vertex
-	: NodeID
-	| Subgraph
-;
-
-// Subgraph : [ "subgraph" [ id ] ] "{" StmtList "}"
-
-Subgraph
-	: OptSubgraphID "{" StmtList "}"
-;
-
-OptSubgraphID
-	: subgraph OptID
-;
-
-// EdgeRHS : edgeop ( NodeID | Subgraph ) [ EdgeRHS ]
-
-OptEdgeRHS
-	: empty
-	| EdgeRHS
-;
-
-EdgeRHS
-	: edgeop Vertex OptEdgeRHS
-;
-
-// AttrStmt : ( "graph" | "node" | "edge" ) AttrList
-
-AttrStmt
-	: graphx AttrList
-	| node AttrList
-	| edge AttrList
+	| Port
 ;
