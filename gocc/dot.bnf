@@ -80,36 +80,50 @@ edgeop
 
 // ### [ Syntax ] ##############################################################
 
+<< import "github.com/graphism/dot/gocc/ast/astx" >>
+
 // === [ Graphs ] ==============================================================
 
-// Graph : [ "strict" ] ( "graph" | "digraph" ) [ ID ] "{" StmtList "}"
+// Graph : [ "strict" ] ( "graph" | "digraph" ) [ ID ] "{" OptStmtList "}"
 
 Graph
-	: OptStrict Directed OptID "{" StmtList "}"
+	: OptStrict Directed OptID
+	  "{" OptStmtList "}"               << astx.NewGraph($0, $1, $2, $4) >>
 ;
 
 OptStrict
-	: empty
-	| strict
+	: empty                             << false, nil >>
+	| strict                            << true, nil >>
 ;
 
 Directed
-	: graphx
-	| digraph
+	: graphx                            << false, nil >>
+	| digraph                           << true, nil >>
+;
+
+ID
+	: id                                << astx.NewID($0) >>
 ;
 
 OptID
-	: empty
-	| id
+	: empty                             << "", nil >>
+	| ID
 ;
 
 // === [ Statements ] ==========================================================
 
-// StmtList : [ Stmt [ ";" ] StmtList ]
+// StmtList
+//    : Stmt [ ";" ]
+//    | Stmt [ ";" ] StmtList
 
 StmtList
-	: empty
+	: Stmt OptSemi
 	| Stmt OptSemi StmtList
+;
+
+OptStmtList
+	: empty
+	| StmtList
 ;
 
 // Stmt
@@ -204,15 +218,15 @@ OptSep
 // --- [ Attribute ] -----------------------------------------------------------
 
 Attr
-	: id "=" id
+	: ID "=" ID
 ;
 
 // --- [ Subgraph ] ------------------------------------------------------------
 
-// Subgraph : [ "subgraph" [ id ] ] "{" StmtList "}"
+// Subgraph : [ "subgraph" [ ID ] ] "{" OptStmtList "}"
 
 Subgraph
-	: OptSubgraphID "{" StmtList "}"
+	: OptSubgraphID "{" OptStmtList "}"
 ;
 
 OptSubgraphID
@@ -231,11 +245,11 @@ Vertex
 // NodeID : ID [ Port ]
 
 NodeID
-	: id OptPort
+	: ID OptPort
 ;
 
 // Port
-//    : ":" id [ ":" CompassPoint ]
+//    : ":" ID [ ":" CompassPoint ]
 //    | ":" CompassPoint
 //
 // CompassPoint
@@ -246,8 +260,8 @@ NodeID
 // parser will actually accept any identifier.
 
 Port
-	: ":" id
-	| ":" id ":" id
+	: ":" ID
+	| ":" ID ":" ID
 ;
 
 OptPort
