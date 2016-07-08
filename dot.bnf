@@ -1,0 +1,230 @@
+// The DOT Language
+//
+// http://www.graphviz.org/doc/info/lang.html
+
+// Tokens
+
+// The keywords node, edge, graph, digraph, subgraph, and strict are case-
+// independent.
+
+node
+	: 'n' 'o' 'd' 'e'
+	| 'N' 'o' 'd' 'e'
+	| 'N' 'O' 'D' 'E'
+;
+
+edge
+	: 'e' 'd' 'g' 'e'
+	| 'E' 'd' 'g' 'e'
+	| 'E' 'D' 'G' 'E'
+;
+
+// TODO: Rename graphx to graph once gocc#20 is fixed [1].
+//
+// [1]: https://github.com/goccmack/gocc/issues/20
+
+graphx
+	: 'g' 'r' 'a' 'p' 'h'
+	| 'G' 'r' 'a' 'p' 'h'
+	| 'G' 'R' 'A' 'P' 'H'
+;
+
+digraph
+	: 'd' 'i' 'g' 'r' 'a' 'p' 'h'
+	| 'D' 'i' 'g' 'r' 'a' 'p' 'h'
+	| 'D' 'i' 'G' 'r' 'a' 'p' 'h'
+	| 'D' 'I' 'G' 'R' 'A' 'P' 'H'
+;
+
+subgraph
+	: 's' 'u' 'b' 'g' 'r' 'a' 'p' 'h'
+	| 'S' 'u' 'b' 'g' 'r' 'a' 'p' 'h'
+	| 'S' 'u' 'b' 'G' 'r' 'a' 'p' 'h'
+	| 'S' 'U' 'B' 'G' 'R' 'A' 'P' 'H'
+;
+
+strict
+	: 's' 't' 'r' 'i' 'c' 't'
+	| 'S' 't' 'r' 'i' 'c' 't'
+	| 'S' 'T' 'R' 'I' 'C' 'T'
+;
+
+_ascii_letter : 'a' - 'z' | 'A' - 'Z' ;
+_ascii_digit  : '0' - '9' ;
+_letter        : _ascii_letter | '_' ;
+_decimal_digit : _ascii_digit ;
+
+// An ID is one of the following:
+//
+//    1) Any string of alphabetic ([a-zA-Z\200-\377]) characters, underscores
+//       ('_') or digits ([0-9]), not beginning with a digit;
+//
+//    2) a numeral [-]?(.[0-9]+ | [0-9]+(.[0-9]*)? );
+//
+//    3) any double-quoted string ("...") possibly containing escaped quotes
+//       (\")1;
+//
+//    4) an HTML string (<...>).
+
+// TODO: Check what \200-\377 means in the 1st representation of IDs.
+// TODO: Add support for the 2nd, 3rd and 4th representation of IDs.
+
+id : _letter { _letter | _decimal_digit } ;
+
+// edgeop : "--" | "-->"
+
+edgeop
+	: '-' '-'
+	| '-' '>'
+;
+
+// Syntax
+
+// Graph : [ "strict" ] ( "graph" | "digraph" ) [ ID ] "{" StmtList "}"
+
+Graph
+	: OptStrict GraphType OptID "{" StmtList "}"
+;
+
+OptStrict
+	: empty
+	| strict
+;
+
+GraphType
+	: graphx
+	| digraph
+;
+
+OptID
+	: empty
+	| id
+;
+
+// StmtList : [ Stmt [ ";" ] StmtList ]
+
+StmtList
+	: empty
+	| Stmt OptSemi StmtList
+;
+
+// Stmt
+//    : NodeStmt
+//    | EdgeStmt
+//    | AttrStmt
+//    | id "=" id
+//    | Subgraph
+
+Stmt
+	: NodeStmt
+	| EdgeStmt
+	| AttrStmt
+	| id "=" id
+	| Subgraph
+;
+
+OptSemi
+	: empty
+	| ";"
+;
+
+// NodeStmt : NodeID [ AttrList ]
+
+NodeStmt
+	: NodeID OptAttrList
+;
+
+// NodeID : ID [ Port ]
+
+NodeID
+	: id OptPort
+;
+
+OptPort
+	: empty
+	| Port
+;
+
+// Port
+//    : ":" id [ ":" CompassPoint ]
+//    | ":" CompassPoint
+//
+// CompassPoint
+//    : "n" | "ne" | "e" | "se" | "s" | "sw" | "w" | "nw" | "c" | "_"
+
+// Note also that the allowed compass point values are not keywords, so these
+// strings can be used elsewhere as ordinary identifiers and, conversely, the
+// parser will actually accept any identifier.
+
+Port
+	: ":" id
+	| ":" id ":" id
+;
+
+OptAttrList
+	: empty
+	| AttrList
+;
+
+// AttrList : "[" [ AList ] "]" [ AttrList ]
+
+AttrList
+	: "[" OptAList "]" OptAttrList
+;
+
+OptAList
+	: empty
+	| AList
+;
+
+// AList : id "=" id [ (";" | ",") ] [ AList ]
+
+AList
+	: id "=" id OptSep OptAList
+;
+
+OptSep
+	: empty
+	| ";"
+	| ","
+;
+
+// EdgeStmt : ( NodeID | Subgraph ) EdgeRHS [ AttrList ]
+
+EdgeStmt
+	: Vertex EdgeRHS OptAttrList
+;
+
+Vertex
+	: NodeID
+	| Subgraph
+;
+
+// Subgraph : [ "subgraph" [ id ] ] "{" StmtList "}"
+
+Subgraph
+	: OptSubgraphID "{" StmtList "}"
+;
+
+OptSubgraphID
+	: subgraph OptID
+;
+
+// EdgeRHS : edgeop ( NodeID | Subgraph ) [ EdgeRHS ]
+
+OptEdgeRHS
+	: empty
+	| EdgeRHS
+;
+
+EdgeRHS
+	: edgeop Vertex OptEdgeRHS
+;
+
+// AttrStmt : ( "graph" | "node" | "edge" ) AttrList
+
+AttrStmt
+	: graphx AttrList
+	| node AttrList
+	| edge AttrList
+;
