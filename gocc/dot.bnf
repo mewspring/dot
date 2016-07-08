@@ -71,58 +71,47 @@ _decimal_digit : _ascii_digit ;
 
 id : _letter { _letter | _decimal_digit } ;
 
-// edgeop : "--" | "-->"
-
-edgeop
-	: '-' '-'
-	| '-' '>'
-;
-
 // ### [ Syntax ] ##############################################################
 
-<< import "github.com/graphism/dot/gocc/ast/astx" >>
+<< import (
+	"github.com/graphism/dot/gocc/ast"
+	"github.com/graphism/dot/gocc/ast/astx"
+) >>
 
 // === [ Graphs ] ==============================================================
 
 // Graph : [ "strict" ] ( "graph" | "digraph" ) [ ID ] "{" OptStmtList "}"
 
 Graph
-	: OptStrict Directed OptID
-	  "{" OptStmtList "}"               << astx.NewGraph($0, $1, $2, $4) >>
+	: OptStrict DirectedGraph OptID
+	  "{" OptStmtList "}"                         << astx.NewGraph($0, $1, $2, $4) >>
 ;
 
 OptStrict
-	: empty                             << false, nil >>
-	| strict                            << true, nil >>
+	: empty                                       << false, nil >>
+	| strict                                      << true, nil >>
 ;
 
-Directed
-	: graphx                            << false, nil >>
-	| digraph                           << true, nil >>
-;
-
-ID
-	: id                                << astx.NewID($0) >>
-;
-
-OptID
-	: empty                             << "", nil >>
-	| ID
+DirectedGraph
+	: graphx                                      << false, nil >>
+	| digraph                                     << true, nil >>
 ;
 
 // === [ Statements ] ==========================================================
 
 // StmtList
 //    : Stmt [ ";" ]
-//    | Stmt [ ";" ] StmtList
+//    | StmtList Stmt [ ";" ]
 
 StmtList
-	: Stmt OptSemi
-	| Stmt OptSemi StmtList
+	: Stmt OptSemi                                << astx.NewStmtList($0) >>
+	| StmtList Stmt OptSemi                       << astx.AppendStmt($0, $1) >>
 ;
 
+// TODO: Verify if nil is needed, or if empty returns nil by default.
+
 OptStmtList
-	: empty
+	: empty                                       << nil, nil >>
 	| StmtList
 ;
 
@@ -151,7 +140,7 @@ OptSemi
 // NodeStmt : NodeID [ AttrList ]
 
 NodeStmt
-	: NodeID OptAttrList
+	: NodeID OptAttrList                          << astx.NewNodeStmt($0, $1) >>
 ;
 
 // --- [ Edge statement ] ------------------------------------------------------
@@ -159,17 +148,24 @@ NodeStmt
 // EdgeStmt : ( NodeID | Subgraph ) Edge [ AttrList ]
 
 EdgeStmt
-	: Vertex Edge OptAttrList
+	: Vertex Edge OptAttrList                     << astx.NewEdgeStmt($0, $1, $2) >>
 ;
 
-// Edge : edgeop ( NodeID | Subgraph ) [ Edge ]
+// Edge : ( "--" | "-->" ) ( NodeID | Subgraph ) [ Edge ]
 
 Edge
-	: edgeop Vertex OptEdge
+	: DirectedEdge Vertex OptEdge                 << astx.NewEdge($0, $1, $2) >>
 ;
 
+DirectedEdge
+	: "--"                                        << false, nil >>
+	| "->"                                        << true, nil >>
+;
+
+// TODO: Verify if nil is needed, or if empty returns nil by default.
+
 OptEdge
-	: empty
+	: empty                                       << nil, nil >>
 	| Edge
 ;
 
@@ -178,13 +174,13 @@ OptEdge
 // AttrStmt : ( "graph" | "node" | "edge" ) AttrList
 
 AttrStmt
-	: Component AttrList
+	: Component AttrList                          << astx.NewAttrStmt($0, $1) >>
 ;
 
 Component
-	: graphx
-	| node
-	| edge
+	: graphx                                      << ast.KindGraph, nil >>
+	| node                                        << ast.KindNode, nil >>
+	| edge                                        << ast.KindEdge, nil >>
 ;
 
 // AttrList : "[" [ AList ] "]" [ AttrList ]
@@ -218,7 +214,7 @@ OptSep
 // --- [ Attribute ] -----------------------------------------------------------
 
 Attr
-	: ID "=" ID
+	: ID "=" ID                                   << astx.NewAttr($0, $2) >>
 ;
 
 // --- [ Subgraph ] ------------------------------------------------------------
@@ -226,11 +222,11 @@ Attr
 // Subgraph : [ "subgraph" [ ID ] ] "{" OptStmtList "}"
 
 Subgraph
-	: OptSubgraphID "{" OptStmtList "}"
+	: OptSubgraphID "{" OptStmtList "}"           << astx.NewSubgraph($0, $2) >>
 ;
 
 OptSubgraphID
-	: subgraph OptID
+	: subgraph OptID                              << $1, nil >>
 ;
 
 // === [ Vertices ] ============================================================
@@ -245,7 +241,7 @@ Vertex
 // NodeID : ID [ Port ]
 
 NodeID
-	: ID OptPort
+	: ID OptPort                                  << astx.NewNodeID($0, $1) >>
 ;
 
 // Port
@@ -260,11 +256,24 @@ NodeID
 // parser will actually accept any identifier.
 
 Port
-	: ":" ID
-	| ":" ID ":" ID
+	: ":" ID                                      << astx.NewPort($1, nil) >>
+	| ":" ID ":" ID                               << astx.NewPort($1, $3) >>
 ;
 
+// TODO: Verify if nil is needed, or if empty returns nil by default.
+
 OptPort
-	: empty
+	: empty                                       << nil, nil >>
 	| Port
+;
+
+// === [ Identifiers ] =========================================================
+
+ID
+	: id                                          << astx.NewID($0) >>
+;
+
+OptID
+	: empty                                       << "", nil >>
+	| ID
 ;

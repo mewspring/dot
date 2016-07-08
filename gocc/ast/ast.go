@@ -67,7 +67,7 @@ type NodeStmt struct {
 type EdgeStmt struct {
 	// Source vertex.
 	From Vertex
-	// Edge.
+	// Outgoing edge.
 	To *Edge
 	// Edge attributes.
 	Attrs []*Attr
