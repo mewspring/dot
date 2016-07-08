@@ -287,8 +287,11 @@ Subgraph
 	: OptSubgraphID "{" OptStmtList "}"           << astx.NewSubgraph($0, $2) >>
 ;
 
+// TODO: Verify if nil is needed, or if empty returns nil by default.
+
 OptSubgraphID
-	: subgraph OptID                              << $1, nil >>
+	: empty                                       << nil, nil >>
+	| subgraph OptID                              << $1, nil >>
 ;
 
 // === [ Vertices ] ============================================================

@@ -183,7 +183,15 @@ func NewAttr(key, val interface{}) (*ast.Attr, error) {
 // NewSubgraph returns a new subgraph based on the given subgraph ID and
 // statements.
 func NewSubgraph(id, stmts interface{}) (*ast.Subgraph, error) {
-	panic("astx.NewSubgraph: not yet implemented")
+	i, ok := id.(string)
+	if len(i) != 0 && !ok {
+		return nil, errutil.Newf("invalid ID type; expected string, got %T", id)
+	}
+	ss, ok := stmts.([]ast.Stmt)
+	if ss != nil && !ok {
+		return nil, errutil.Newf("invalid statements type; expected []ast.Stmt, got %T", stmts)
+	}
+	return &ast.Subgraph{ID: i, Stmts: ss}, nil
 }
 
 // === [ Vertices ] ============================================================
