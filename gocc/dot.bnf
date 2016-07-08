@@ -112,14 +112,14 @@ StmtList
 //    : NodeStmt
 //    | EdgeStmt
 //    | AttrStmt
-//    | id "=" id
+//    | Attr
 //    | Subgraph
 
 Stmt
 	: NodeStmt
 	| EdgeStmt
 	| AttrStmt
-	| id "=" id
+	| Attr
 	| Subgraph
 ;
 
@@ -177,10 +177,14 @@ OptAList
 	| AList
 ;
 
-// AList : id "=" id [ (";" | ",") ] [ AList ]
+// AList : Attr [ (";" | ",") ] [ AList ]
 
 AList
-	: id "=" id OptSep OptAList
+	: Attr OptSep OptAList
+;
+
+Attr
+	: id "=" id
 ;
 
 OptSep
