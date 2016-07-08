@@ -93,8 +93,8 @@ type Edge struct {
 //    node [ color=blue ]
 //    edge [ minlen=1 ]
 type AttrStmt struct {
-	// Graph component to which the attributes are assigned.
-	Component Kind
+	// Graph component kind to which the attributes are assigned.
+	Kind Kind
 	// Attributes.
 	Attrs []*Attr
 }
@@ -103,7 +103,7 @@ type AttrStmt struct {
 // be assigned.
 type Kind uint
 
-// Graph components.
+// Graph component kinds.
 const (
 	KindGraph Kind = iota
 	KindNode

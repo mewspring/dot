@@ -2,7 +2,11 @@
 // trees of Graphviz DOT graphs.
 package astx
 
-import "github.com/graphism/dot/gocc/ast"
+import (
+	"github.com/graphism/dot/gocc/ast"
+	"github.com/graphism/dot/gocc/token"
+	"github.com/mewkiz/pkg/errutil"
+)
 
 // === [ Graphs ] ==============================================================
 
@@ -49,18 +53,67 @@ func NewEdge(directed, vertex, to interface{}) (*ast.EdgeStmt, error) {
 // --- [ Attribute statement ] -------------------------------------------------
 
 // NewAttrStmt returns a new attribute statement based on the given graph
-// component and attributes.
-func NewAttrStmt(component, attrs interface{}) (*ast.AttrStmt, error) {
-	panic("astx.NewAttrStmt: not yet implemented")
+// component kind and attributes.
+func NewAttrStmt(kind, attrs interface{}) (*ast.AttrStmt, error) {
+	k, ok := kind.(ast.Kind)
+	if !ok {
+		return nil, errutil.Newf("invalid graph component kind type; expected ast.Kind, got %T", kind)
+	}
+	a, ok := attrs.([]*ast.Attr)
+	if !ok {
+		return nil, errutil.Newf("invalid attributes type; expected []*ast.Attr, got %T", attrs)
+	}
+	return &ast.AttrStmt{Kind: k, Attrs: a}, nil
 }
 
-// TODO: Add AttrList.
+// NewAttrList returns a new attribute list based on the given attribute.
+func NewAttrList(attr interface{}) ([]*ast.Attr, error) {
+	a, ok := attr.(*ast.Attr)
+	if !ok {
+		return nil, errutil.Newf("invalid attribute type; expected *ast.Attr, got %T", attr)
+	}
+	return []*ast.Attr{a}, nil
+}
+
+// AppendAttr appends attr to the given attribute list.
+func AppendAttr(list, attr interface{}) ([]*ast.Attr, error) {
+	l, ok := list.([]*ast.Attr)
+	if !ok {
+		return nil, errutil.Newf("invalid attribute list type; expected []*ast.Attr, got %T", list)
+	}
+	a, ok := attr.(*ast.Attr)
+	if !ok {
+		return nil, errutil.Newf("invalid attribute type; expected *ast.Attr, got %T", attr)
+	}
+	return append(l, a), nil
+}
+
+// AppendAttrList appends attrs to the given attribute list.
+func AppendAttrList(list, attrs interface{}) ([]*ast.Attr, error) {
+	l, ok := list.([]*ast.Attr)
+	if list != nil && !ok {
+		return nil, errutil.Newf("invalid attribute list type; expected []*ast.Attr, got %T", list)
+	}
+	a, ok := attrs.([]*ast.Attr)
+	if attrs != nil && !ok {
+		return nil, errutil.Newf("invalid attributes type; expected []*ast.Attr, got %T", attrs)
+	}
+	return append(l, a...), nil
+}
 
 // --- [ Attribute ] -----------------------------------------------------------
 
 // NewAttr returns a new attribute based on the given key-value pair.
-func NewAttr(key, value interface{}) (*ast.Attr, error) {
-	panic("astx.NewAttr: not yet implemented")
+func NewAttr(key, val interface{}) (*ast.Attr, error) {
+	k, ok := key.(string)
+	if !ok {
+		return nil, errutil.Newf("invalid key type; expected string, got %T", key)
+	}
+	v, ok := val.(string)
+	if !ok {
+		return nil, errutil.Newf("invalid value type; expected string, got %T", val)
+	}
+	return &ast.Attr{Key: k, Val: v}, nil
 }
 
 // --- [ Subgraph ] ------------------------------------------------------------
@@ -95,5 +148,9 @@ func NewPort(id, compassPoint interface{}) (*ast.Port, error) {
 
 // NewID returns a new identifier based on the given ID token.
 func NewID(id interface{}) (string, error) {
-	panic("astx.NewID: not yet implemented")
+	i, ok := id.(*token.Token)
+	if !ok {
+		return "", errutil.Newf("invalid identifier type; expected *token.Token, got %T", id)
+	}
+	return string(i.Lit), nil
 }
