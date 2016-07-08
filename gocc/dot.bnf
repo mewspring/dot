@@ -113,6 +113,16 @@ _string_lit   : '"' { _char } '"' ;
 
 // TODO: Check which whitespace characters are allowed to separate tokens.
 
+// Comments
+
+_line_comment
+	: '/' '/' { . } '\n'
+	| '#' { . } '\n'
+;
+
+_block_comment : '/' '*' { . | '*' } '*' '/' ;
+!comment       : _line_comment | _block_comment ;
+
 !whitespace : ' ' | '\t' | '\v' | '\f' | '\r' | '\n' ;
 
 // ### [ Syntax ] ##############################################################
