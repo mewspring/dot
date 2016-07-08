@@ -212,15 +212,61 @@ func NewNodeID(id, optPort interface{}) (*ast.NodeID, error) {
 	return &ast.NodeID{ID: i, Port: p}, nil
 }
 
-// NewPort returns a new port based on the given id and compass point.
-func NewPort(id, compassPoint interface{}) (*ast.Port, error) {
-	// NOTE: If compassPoint is nil, id may be either an identifier or a compass
-	// point.
+// NewPort returns a new port based on the given id and optional compass point.
+func NewPort(id, optCompassPoint interface{}) (*ast.Port, error) {
+	// NOTE: If optCompassPoint is nil, id may be either an identifier or a
+	// compass point.
 	//
 	// The following strings are valid compass points:
 	//
 	//    "n", "ne", "e", "se", "s", "sw", "w", "nw", "c" and "_"
-	panic("astx.NewPort: not yet implemented")
+	i, ok := id.(string)
+	if !ok {
+		return nil, errutil.Newf("invalid ID type; expected string, got %T", id)
+	}
+
+	// Early return if optional compass point is absent and ID is a valid compass
+	// point.
+	if optCompassPoint == nil {
+		if compassPoint, ok := getCompassPoint(i); ok {
+			return &ast.Port{CompassPoint: compassPoint}, nil
+		}
+	}
+
+	c, ok := optCompassPoint.(string)
+	if optCompassPoint != nil && !ok {
+		return nil, errutil.Newf("invalid compass point type; expected string, got %T", optCompassPoint)
+	}
+	compassPoint, _ := getCompassPoint(c)
+	return &ast.Port{ID: i, CompassPoint: compassPoint}, nil
+}
+
+// getCompassPoint returns the corresponding compass point to the given string,
+// and a boolean value indicating if such a compass point exists.
+func getCompassPoint(s string) (ast.CompassPoint, bool) {
+	switch s {
+	case "_":
+		return ast.CompassPointDefault, true
+	case "n":
+		return ast.CompassPointNorth, true
+	case "ne":
+		return ast.CompassPointNorthEast, true
+	case "e":
+		return ast.CompassPointEast, true
+	case "se":
+		return ast.CompassPointSouthEast, true
+	case "s":
+		return ast.CompassPointSouth, true
+	case "sw":
+		return ast.CompassPointSouthWest, true
+	case "w":
+		return ast.CompassPointWest, true
+	case "nw":
+		return ast.CompassPointNorthWest, true
+	case "c":
+		return ast.CompassPointCenter, true
+	}
+	return ast.CompassPointDefault, false
 }
 
 // === [ Identifiers ] =========================================================

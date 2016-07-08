@@ -176,14 +176,26 @@ type NodeID struct {
 type Port struct {
 	// Port ID; or empty if none.
 	ID string
-	// Compass point; or empty if none.
-	CompassPoint string
+	// Compass point.
+	CompassPoint CompassPoint
 }
 
-// TODO: Add enum for CompassPoint?
-//
-//    CompassPoint
-//       : "n" | "ne" | "e" | "se" | "s" | "sw" | "w" | "nw" | "c" | "_"
+// CompassPoint specifies the set of compass points.
+type CompassPoint uint
+
+// Compass points.
+const (
+	CompassPointDefault   CompassPoint = iota // _
+	CompassPointNorth                         // n
+	CompassPointNorthEast                     // ne
+	CompassPointEast                          // e
+	CompassPointSouthEast                     // se
+	CompassPointSouth                         // s
+	CompassPointSouthWest                     // sw
+	CompassPointWest                          // w
+	CompassPointNorthWest                     // nw
+	CompassPointCenter                        // c
+)
 
 // isVertex ensures that only vertices can be assigned to the Vertex interface.
 func (*NodeID) isVertex()   {}
