@@ -8,6 +8,19 @@ This package provides access to [Graphviz DOT] files.
 
 [Graphviz DOT]: http://www.graphviz.org/doc/info/lang.html
 
+## Installation
+
+Install [Gocc] `go get github.com/goccmack/gocc`.
+
+[Gocc]: https://github.com/goccmack/gocc
+
+```
+$ go get -d github.com/graphism/dot
+$ cd ${GOPATH}/src/github.com/graphism/dot/gocc
+$ make gen
+$ go get github.com/graphism/dot/...
+```
+
 ## Public domain
 
 The source code and any original content of this repository is hereby released into the [public domain].
