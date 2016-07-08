@@ -20,12 +20,24 @@ func NewGraph(strict, directed, id, stmts interface{}) (*ast.Graph, error) {
 
 // NewStmtList returns a new statement list based on the given statement.
 func NewStmtList(stmt interface{}) ([]ast.Stmt, error) {
-	panic("astx.NewStmtList: not yet implemented")
+	s, ok := stmt.(ast.Stmt)
+	if !ok {
+		return nil, errutil.Newf("invalid statement type; expected ast.Stmt, got %T", stmt)
+	}
+	return []ast.Stmt{s}, nil
 }
 
 // AppendStmt appends stmt to the given statement list.
 func AppendStmt(list, stmt interface{}) ([]ast.Stmt, error) {
-	panic("astx.AppendStmt: not yet implemented")
+	l, ok := list.([]ast.Stmt)
+	if !ok {
+		return nil, errutil.Newf("invalid statement list type; expected []ast.Stmt, got %T", list)
+	}
+	s, ok := stmt.(ast.Stmt)
+	if !ok {
+		return nil, errutil.Newf("invalid statement type; expected ast.Stmt, got %T", stmt)
+	}
+	return append(l, s), nil
 }
 
 // --- [ Node statement ] ------------------------------------------------------
@@ -130,7 +142,15 @@ func NewSubgraph(id, stmts interface{}) (*ast.Subgraph, error) {
 
 // NewNodeID returns a new node ID based on the given node id and port.
 func NewNodeID(id, port interface{}) (*ast.NodeID, error) {
-	panic("astx.NewNodeID: not yet implemented")
+	i, ok := id.(string)
+	if !ok {
+		return nil, errutil.Newf("invalid node ID type; expected string, got %T", id)
+	}
+	p, ok := port.(*ast.Port)
+	if port != nil && !ok {
+		return nil, errutil.Newf("invalid port type; expected *ast.Port, got %T", port)
+	}
+	return &ast.NodeID{ID: i, Port: p}, nil
 }
 
 // NewPort returns a new port based on the given id and compass point.

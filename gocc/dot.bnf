@@ -93,7 +93,8 @@ _int_lit
 ;
 
 _escaped_char : '\\' 'n' ;
-_string_lit   : '"' ( _ascii_char | '\'' | _escaped_char ) '"' ;
+_char         : _ascii_char | '\'' | _escaped_char ;
+_string_lit   : '"' { _char } '"' ;
 
 // TODO: Check which whitespace characters are allowed to separate tokens.
 
