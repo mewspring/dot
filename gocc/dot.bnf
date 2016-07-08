@@ -96,7 +96,11 @@ _int_lit
 // That is, in quoted strings, the dyad \" is converted to "; all other
 // characters are left unchanged. In particular, \\ remains \\.
 
-// TODO: Convert \" to "
+// As another aid for readability, dot allows double-quoted strings to span
+// multiple physical lines using the standard C convention of a backslash
+// immediately preceding a newline character.
+
+// In addition, double-quoted strings can be concatenated using a '+' operator.
 
 _escaped_char : '\\' ( '"' | _ascii_char | '\'' | '\\' ) ;
 _char         : _ascii_char | '\'' | _escaped_char ;

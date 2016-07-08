@@ -220,5 +220,8 @@ func NewID(id interface{}) (string, error) {
 	if !ok {
 		return "", errutil.Newf("invalid identifier type; expected *token.Token, got %T", id)
 	}
+	// TODO: Convert \" to "
+	// TODO: Handle newline backslash C convention.
+	// TODO: Add support for concatenated using a '+' operator.
 	return string(i.Lit), nil
 }
