@@ -13,7 +13,23 @@ import (
 // NewGraph returns a new graph based on the given graph strictness, direction,
 // ID and statements.
 func NewGraph(strict, directed, id, stmts interface{}) (*ast.Graph, error) {
-	panic("astx.NewGraph: not yet implemented")
+	s, ok := strict.(bool)
+	if !ok {
+		return nil, errutil.Newf("invalid strictness type; expected bool, got %T", strict)
+	}
+	d, ok := directed.(bool)
+	if !ok {
+		return nil, errutil.Newf("invalid direction type; expected bool, got %T", directed)
+	}
+	i, ok := id.(string)
+	if !ok {
+		return nil, errutil.Newf("invalid ID type; expected string, got %T", id)
+	}
+	ss, ok := stmts.([]ast.Stmt)
+	if ss != nil && !ok {
+		return nil, errutil.Newf("invalid statements type; expected []ast.Stmt, got %T", stmts)
+	}
+	return &ast.Graph{Strict: s, Directed: d, ID: i, Stmts: ss}, nil
 }
 
 // === [ Statements ] ==========================================================
@@ -45,7 +61,15 @@ func AppendStmt(list, stmt interface{}) ([]ast.Stmt, error) {
 // NewNodeStmt returns a new node statement based on the given node ID and
 // attributes.
 func NewNodeStmt(nodeID, attrs interface{}) (*ast.NodeStmt, error) {
-	panic("astx.NewNodeStmt: not yet implemented")
+	n, ok := nodeID.(*ast.NodeID)
+	if !ok {
+		return nil, errutil.Newf("invalid node ID type; expected *ast.NodeID, got %T", nodeID)
+	}
+	as, ok := attrs.([]*ast.Attr)
+	if !ok {
+		return nil, errutil.Newf("invalid attributes type; expected []*ast.Attr, got %T", attrs)
+	}
+	return &ast.NodeStmt{NodeID: n, Attrs: as}, nil
 }
 
 // --- [ Edge statement ] ------------------------------------------------------
@@ -53,13 +77,37 @@ func NewNodeStmt(nodeID, attrs interface{}) (*ast.NodeStmt, error) {
 // NewEdgeStmt returns a new edge statement based on the given source vertex,
 // outgoing edge and attributes.
 func NewEdgeStmt(from, to, attrs interface{}) (*ast.EdgeStmt, error) {
-	panic("astx.NewEdgeStmt: not yet implemented")
+	f, ok := from.(ast.Vertex)
+	if !ok {
+		return nil, errutil.Newf("invalid source vertex type; expected ast.Vertex, got %T", from)
+	}
+	t, ok := to.(*ast.Edge)
+	if to != nil && !ok {
+		return nil, errutil.Newf("invalid outgoing edge type; expected *ast.Edge, got %T", to)
+	}
+	as, ok := attrs.([]*ast.Attr)
+	if attrs != nil && !ok {
+		return nil, errutil.Newf("invalid attributes type; expected []*ast.Attr, got %T", attrs)
+	}
+	return &ast.EdgeStmt{From: f, To: t, Attrs: as}, nil
 }
 
-// NewEdge returns a new edge based on the given edge direction, vertex and
-// outgoing edge.
-func NewEdge(directed, vertex, to interface{}) (*ast.EdgeStmt, error) {
-	panic("astx.NewEdge: not yet implemented")
+// NewEdge returns a new edge based on the given edge direction, destination
+// vertex and outgoing edge.
+func NewEdge(directed, vertex, to interface{}) (*ast.Edge, error) {
+	d, ok := directed.(bool)
+	if !ok {
+		return nil, errutil.Newf("invalid direction type; expected bool, got %T", directed)
+	}
+	v, ok := vertex.(ast.Vertex)
+	if !ok {
+		return nil, errutil.Newf("invalid destination vertex type; expected ast.Vertex, got %T", vertex)
+	}
+	t, ok := to.(*ast.Edge)
+	if to != nil && !ok {
+		return nil, errutil.Newf("invalid outgoing edge type; expected *ast.Edge, got %T", to)
+	}
+	return &ast.Edge{Directed: d, Vertex: v, To: t}, nil
 }
 
 // --- [ Attribute statement ] -------------------------------------------------
@@ -71,11 +119,11 @@ func NewAttrStmt(kind, attrs interface{}) (*ast.AttrStmt, error) {
 	if !ok {
 		return nil, errutil.Newf("invalid graph component kind type; expected ast.Kind, got %T", kind)
 	}
-	a, ok := attrs.([]*ast.Attr)
+	as, ok := attrs.([]*ast.Attr)
 	if !ok {
 		return nil, errutil.Newf("invalid attributes type; expected []*ast.Attr, got %T", attrs)
 	}
-	return &ast.AttrStmt{Kind: k, Attrs: a}, nil
+	return &ast.AttrStmt{Kind: k, Attrs: as}, nil
 }
 
 // NewAttrList returns a new attribute list based on the given attribute.
@@ -106,11 +154,11 @@ func AppendAttrList(list, attrs interface{}) ([]*ast.Attr, error) {
 	if list != nil && !ok {
 		return nil, errutil.Newf("invalid attribute list type; expected []*ast.Attr, got %T", list)
 	}
-	a, ok := attrs.([]*ast.Attr)
+	as, ok := attrs.([]*ast.Attr)
 	if attrs != nil && !ok {
 		return nil, errutil.Newf("invalid attributes type; expected []*ast.Attr, got %T", attrs)
 	}
-	return append(l, a...), nil
+	return append(l, as...), nil
 }
 
 // --- [ Attribute ] -----------------------------------------------------------
@@ -144,7 +192,7 @@ func NewSubgraph(id, stmts interface{}) (*ast.Subgraph, error) {
 func NewNodeID(id, port interface{}) (*ast.NodeID, error) {
 	i, ok := id.(string)
 	if !ok {
-		return nil, errutil.Newf("invalid node ID type; expected string, got %T", id)
+		return nil, errutil.Newf("invalid ID type; expected string, got %T", id)
 	}
 	p, ok := port.(*ast.Port)
 	if port != nil && !ok {
@@ -161,7 +209,7 @@ func NewPort(id, compassPoint interface{}) (*ast.Port, error) {
 	// The following strings are valid compass points:
 	//
 	//    "n", "ne", "e", "se", "s", "sw", "w", "nw", "c" and "_"
-	panic("astx.n: not yet implemented")
+	panic("astx.NewPort: not yet implemented")
 }
 
 // === [ Identifiers ] =========================================================
