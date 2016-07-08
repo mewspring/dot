@@ -92,7 +92,13 @@ _int_lit
 	| [ '-' ] _decimals [ '.' { _decimal_digit } ]
 ;
 
-_escaped_char : '\\' 'n' ;
+// In quoted strings in DOT, the only escaped character is double-quote (").
+// That is, in quoted strings, the dyad \" is converted to "; all other
+// characters are left unchanged. In particular, \\ remains \\.
+
+// TODO: Convert \" to "
+
+_escaped_char : '\\' ( '"' | _ascii_char | '\'' | '\\' ) ;
 _char         : _ascii_char | '\'' | _escaped_char ;
 _string_lit   : '"' { _char } '"' ;
 
