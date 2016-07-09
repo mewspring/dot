@@ -54,13 +54,13 @@ test: input $(INPUT_PNG) output $(OUTPUT_PNG)
 
 input:
 	mkdir -p $@
+	dot -V
 
 input/%.png: %.dot
 	dot -Tpng -o $@ $<
 
 output:
 	mkdir -p $@
-	dot -V
 
 output/%.png: %.dot
 	dotfmt -o "output/$<" $<
