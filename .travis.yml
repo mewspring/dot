@@ -16,7 +16,9 @@ before_install:
   - go get github.com/golang/lint/golint
   - go get github.com/mattn/goveralls
   - go get github.com/goccmack/gocc
+  - go get github.com/mewkiz/cmd/imgcmp
   - make -C $HOME/gopath/src/github.com/graphism/dot/gocc gen
+  - make -C $HOME/gopath/src/github.com/graphism/dot/testdata fetch
 
 install:
   - go get ./...
@@ -28,3 +30,4 @@ before_script:
 
 script:
   - ./goclean.sh
+  - make -C $HOME/gopath/src/github.com/graphism/dot/testdata test
