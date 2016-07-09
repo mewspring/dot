@@ -153,8 +153,8 @@ _block_comment : '/' '*' { . | '*' } '*' '/' ;
 // ### [ Syntax ] ##############################################################
 
 << import (
-	"github.com/graphism/dot/gocc/ast"
-	"github.com/graphism/dot/gocc/ast/astx"
+	"github.com/graphism/dot/ast"
+	"github.com/graphism/dot/gocc/astx"
 ) >>
 
 // === [ Files ] ===============================================================

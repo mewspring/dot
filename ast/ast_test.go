@@ -1,6 +1,6 @@
 package ast_test
 
-import "github.com/graphism/dot/gocc/ast"
+import "github.com/graphism/dot/ast"
 
 // Verify that all statements implement the Stmt interface.
 var (

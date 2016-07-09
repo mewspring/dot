@@ -5,7 +5,7 @@ package astx
 import (
 	"strings"
 
-	"github.com/graphism/dot/gocc/ast"
+	"github.com/graphism/dot/ast"
 	"github.com/graphism/dot/gocc/token"
 	"github.com/mewkiz/pkg/errutil"
 )
