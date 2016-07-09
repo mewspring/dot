@@ -82,10 +82,13 @@ fetch: graphviz
 	grep -l "charset=latin1" *.dot | xargs -I '{}' recode ISO-8859-1..UTF8 "{}"
 	recode ISO-8859-1..UTF8 Latin1.dot
 
+	# Clean up.
+	rm -rf graphviz
+
 graphviz:
 	git clone https://github.com/ellson/graphviz.git
 
 clean:
-	rm -rf *.dot graphviz input output
+	rm -rf *.dot input output
 
 .PHONY: all test fetch clean
