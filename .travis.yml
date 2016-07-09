@@ -10,6 +10,11 @@ env:
     - secure: "Y18ESASl8YUT3JvLNo/nhd9K/WXVqYz2J9EBdO4kl9VRdPG/zKrTBxYVkSId+dqpD+judwaprYYG5T9QGrJP6soieD+E22h46TyKXoXI+kgnyP3ZHjrQ/Zy/LoBv+AtCaJePsRAR/UjZab6cG+oahGnVohHsvv4tmFz5CXKjViWhx0/I4nmscN1A6n7tCCc/BQpp5yjD/r1ydLEoC9vMaoO2aWM0nMS+N2BILGcHaVXLoGZvNG8DmuLBQYJzh7vz7KGMnPxbVZCvOI4WsNkhiH9JDg77MjA8L/JnToxViTXacr1wHqC5lqMbzB8BR9/oA0xL0sBw7OS2QrFLsGtwzqBIozaQG/d6K9mleladZIAxn9gtJraZqgCFBZXldKkDs3QmLgEGGFv1vFT0d1K1gKq9RKmUFT/JEIrj3PMQpI7b4wunk/Dj2eIzgMHZn6wtGgILMaiScd3u2GTuQPITiRGW71WmBEg3LuDJTH8DX7LzVaZAZ75B4TtYT1Hs7m4ApV0Ys+p6nLi//NCtatOZ0yHSjgbu4jlUxlhV1DxA527bkRS+IHcC++2v+eVZQexGPOB7bXGwfXdngKtWmwpODDjJG0f792qDExLJxItBU8A0lctDoOjHR7gVVLjLgyChwAcEECTldU4S/Co4+wxqKcRkthteRtm0yhm9qfXXrVA="
     - PATH=$HOME/gopath/bin:$PATH
 
+addons:
+  apt:
+    packages:
+      - recode
+
 before_install:
   - go get golang.org/x/tools/cmd/cover
   - go get golang.org/x/tools/cmd/goimports
