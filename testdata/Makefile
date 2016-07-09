@@ -60,6 +60,7 @@ input/%.png: %.dot
 
 output:
 	mkdir -p $@
+	dot -V
 
 output/%.png: %.dot
 	dotfmt -o "output/$<" $<
