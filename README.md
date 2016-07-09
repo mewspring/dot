@@ -23,7 +23,7 @@ $ go get github.com/graphism/dot/...
 
 ## Credits
 
-This project has been inspired by [Walter Schulze](https://github.com/awalterschulze)'s [gographviz](https://github.com/awalterschulze/gographviz) library, and also uses [Marius Ackerman](https://github.com/goccmack) and Walter's [Gocc](https://github.com/goccmack/gocc) compiler kit to generate lexers and parsers from a [BNF grammar of the DOT file format](https://github.com/graphism/dot/blob/master/gocc/dot.bnf).
+This project has been inspired by [Walter Schulze](https://github.com/awalterschulze)'s [gographviz](https://github.com/awalterschulze/gographviz) library, and also uses [Marius Ackerman](https://github.com/goccmack) and Walter's [Gocc](https://github.com/goccmack/gocc) compiler kit to generate lexers and parsers from a [BNF grammar](https://github.com/graphism/dot/blob/master/gocc/dot.bnf) of the DOT file format.
 
 ## Public domain
 
