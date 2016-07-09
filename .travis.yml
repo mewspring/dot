@@ -14,9 +14,17 @@ addons:
   apt:
     packages:
       - recode
-      - graphviz
+
+#      - graphviz
 
 before_install:
+  - sudo apt-get --verbose-versions update
+  - sudo apt-get --verbose-versions remove libxdot4 libgvc5 libgraph4 libcgraph5 libcdt4 libpathplan4
+  - sudo apt-get --verbose-versions install libdevil1c2 libgts-0.7-5 liblasi0 freeglut3 libglade2-0 libgtkglext1
+  - curl -o libgraphviz.deb http://www.graphviz.org/pub/graphviz/stable/ubuntu/ub12.04/x86_64/libgraphviz4_2.38.0-1~precise_amd64.deb
+  - sudo dpkg --force-conflicts -i libgraphviz.deb
+  - curl -o graphviz.deb http://www.graphviz.org/pub/graphviz/stable/ubuntu/ub12.04/x86_64/graphviz_2.38.0-1~precise_amd64.deb
+  - sudo dpkg -i graphviz.deb
   - go get golang.org/x/tools/cmd/cover
   - go get golang.org/x/tools/cmd/goimports
   - go get github.com/golang/lint/golint
