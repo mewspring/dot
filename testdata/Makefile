@@ -72,7 +72,8 @@ fetch: graphviz
 	find graphviz -type f -name '*.dot' | xargs -I '{}' cp "{}" .
 
 	# Rename *.gv to *.dot.
-	rename .gv .dot *.gv
+	#rename .gv .dot *.gv
+	ls *.gv | xargs -I '{}' basename "{}" .gv | xargs -I '{}' mv "{}.gv" "{}.dot"
 
 	# Remove execute permissions.
 	chmod 0644 *.dot
