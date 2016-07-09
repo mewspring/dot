@@ -39,20 +39,7 @@ func CopyDirected(dst graph.DirectedBuilder, src *ast.Graph) {
 		ids: make(map[string]graph.Node),
 	}
 	for _, stmt := range src.Stmts {
-		switch stmt := stmt.(type) {
-		case *ast.NodeStmt:
-			panic("not yet implemented")
-		case *ast.EdgeStmt:
-			gen.addEdgeStmt(dst, stmt)
-		case *ast.AttrStmt:
-			panic("not yet implemented")
-		case *ast.Attr:
-			panic("not yet implemented")
-		case *ast.Subgraph:
-			panic("not yet implemented")
-		default:
-			panic(fmt.Sprintf("unknown statement type %T", stmt))
-		}
+		gen.addStmt(dst, stmt)
 	}
 }
 
@@ -61,6 +48,12 @@ func CopyDirected(dst graph.DirectedBuilder, src *ast.Graph) {
 type generator struct {
 	// ids maps from dot AST node ID to gonum node.
 	ids map[string]graph.Node
+	// Nodes processed within the context of a subgraph, that is to be used as a
+	// vertex of an edge.
+	subNodes []graph.Node
+	// Stack of start indices into the subgraph node slice. The top element
+	// corresponds to the start index of the active (or inner-most) subgraph.
+	subStart []int
 }
 
 // node returns the gonum node corresponding to the given dot AST node ID,
@@ -72,6 +65,13 @@ func (gen *generator) node(dst graph.DirectedBuilder, id string) graph.Node {
 	n := simple.Node(dst.NewNodeID())
 	gen.ids[id] = n
 	dst.AddNode(n)
+	// Check if within the context of a subgraph, that is to be used as a vertex
+	// of an edge.
+	if gen.isInSubgraph() {
+		// Append node processed within the context of a subgraph, that is to be
+		// used as a vertex of an edge
+		gen.appendSubgraphNode(n)
+	}
 	return n
 }
 
@@ -85,6 +85,26 @@ func (gen *generator) edge(dst graph.DirectedBuilder, from, to graph.Node) graph
 	e := simple.Edge{F: from, T: to, W: 1}
 	dst.SetEdge(e)
 	return e
+}
+
+// addStmt adds the given statement to the graph.
+func (gen *generator) addStmt(dst graph.DirectedBuilder, stmt ast.Stmt) {
+	switch stmt := stmt.(type) {
+	case *ast.NodeStmt:
+		gen.node(dst, stmt.NodeID.ID)
+	case *ast.EdgeStmt:
+		gen.addEdgeStmt(dst, stmt)
+	case *ast.AttrStmt:
+		// ignore.
+	case *ast.Attr:
+		// ignore.
+	case *ast.Subgraph:
+		for _, stmt := range stmt.Stmts {
+			gen.addStmt(dst, stmt)
+		}
+	default:
+		panic(fmt.Sprintf("unknown statement type %T", stmt))
+	}
 }
 
 // addEdgeStmt adds the given edge statement to the graph.
@@ -105,7 +125,11 @@ func (gen *generator) addVertex(dst graph.DirectedBuilder, v ast.Vertex) []graph
 		n := gen.node(dst, v.ID)
 		return []graph.Node{n}
 	case *ast.Subgraph:
-		panic("not yet implemented")
+		gen.pushSubgraph()
+		for _, stmt := range v.Stmts {
+			gen.addStmt(dst, stmt)
+		}
+		return gen.popSubgraph()
 	default:
 		panic(fmt.Sprintf("unknown vertex type %T", v))
 	}
@@ -124,4 +148,55 @@ func (gen *generator) addEdge(dst graph.DirectedBuilder, to *ast.Edge) []graph.N
 		}
 	}
 	return fs
+}
+
+// pushSubgraph pushes the node start index of the active subgraph onto the
+// stack.
+func (gen *generator) pushSubgraph() {
+	gen.subStart = append(gen.subStart, len(gen.subNodes))
+}
+
+// pushSubgraph pops the node start index of the active subgraph from the stack,
+// and returns the nodes processed since.
+func (gen *generator) popSubgraph() []graph.Node {
+	// Get nodes processed since the subgraph became active.
+	start := gen.subStart[len(gen.subStart)-1]
+	// TODO: Figure out a better way to store subgraph nodes, so that duplicates
+	// may not occur.
+	nodes := unique(gen.subNodes[start:])
+	// Remove subgraph from stack.
+	gen.subStart = gen.subStart[:len(gen.subStart)-1]
+	if len(gen.subStart) == 0 {
+		// Remove subgraph nodes when the bottom-most subgraph has been processed.
+		gen.subNodes = gen.subNodes[:0]
+	}
+	return nodes
+}
+
+// unique returns the set of unique nodes contained within ns.
+func unique(ns []graph.Node) []graph.Node {
+	var nodes []graph.Node
+	m := make(map[int]bool)
+	for _, n := range ns {
+		id := n.ID()
+		if m[id] {
+			// skip duplicate node
+			continue
+		}
+		m[id] = true
+		nodes = append(nodes, n)
+	}
+	return nodes
+}
+
+// isInSubgraph reports whether the active context is within a subgraph, that is
+// to be used as a vertex of an edge.
+func (gen *generator) isInSubgraph() bool {
+	return len(gen.subStart) > 0
+}
+
+// appendSubgraphNode appends the given node to the slice of nodes processed
+// within the context of a subgraph.
+func (gen *generator) appendSubgraphNode(n graph.Node) {
+	gen.subNodes = append(gen.subNodes, n)
 }
