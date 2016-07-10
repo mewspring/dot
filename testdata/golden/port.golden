@@ -1,0 +1,5 @@
+digraph {
+	A:ne -> B:sw
+	C:foo -> D:bar:se
+	E -> F
+}
