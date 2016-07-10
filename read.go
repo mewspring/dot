@@ -6,28 +6,7 @@ import (
 	"github.com/gonum/graph"
 	"github.com/gonum/graph/simple"
 	"github.com/graphism/dot/ast"
-	"github.com/graphism/dot/gocc/lexer"
-	"github.com/graphism/dot/gocc/parser"
-	"github.com/mewkiz/pkg/errutil"
 )
-
-// ParseFile parses the given Graphviz DOT file.
-func ParseFile(path string) (*ast.File, error) {
-	l, err := lexer.NewLexerFile(path)
-	if err != nil {
-		return nil, errutil.Err(err)
-	}
-	p := parser.NewParser()
-	file, err := p.Parse(l)
-	if err != nil {
-		return nil, errutil.Err(err)
-	}
-	f, ok := file.(*ast.File)
-	if !ok {
-		return nil, errutil.Newf("invalid file type; expected *ast.File, got %T", file)
-	}
-	return f, nil
-}
 
 // CopyDirected copies the nodes and edges from the AST of the directed source
 // graph to the destination graph.
