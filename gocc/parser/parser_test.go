@@ -13,40 +13,40 @@ func TestParseFile(t *testing.T) {
 		in  string
 		out string
 	}{
-		{in: "../../testdata/golden/empty.dot"},
-		{in: "../../testdata/golden/graph.dot"},
-		{in: "../../testdata/golden/digraph.dot"},
-		{in: "../../testdata/golden/strict.dot"},
-		{in: "../../testdata/golden/multi.dot"},
-		{in: "../../testdata/golden/named_graph.dot"},
-		{in: "../../testdata/golden/node_stmt.dot"},
-		{in: "../../testdata/golden/edge_stmt.dot"},
-		{in: "../../testdata/golden/attr_stmt.dot"},
-		{in: "../../testdata/golden/attr.dot"},
+		{in: "testdata/empty.dot"},
+		{in: "testdata/graph.dot"},
+		{in: "testdata/digraph.dot"},
+		{in: "testdata/strict.dot"},
+		{in: "testdata/multi.dot"},
+		{in: "testdata/named_graph.dot"},
+		{in: "testdata/node_stmt.dot"},
+		{in: "testdata/edge_stmt.dot"},
+		{in: "testdata/attr_stmt.dot"},
+		{in: "testdata/attr.dot"},
 		{
-			in:  "../../testdata/golden/subgraph.dot",
-			out: "../../testdata/golden/subgraph.golden",
+			in:  "testdata/subgraph.dot",
+			out: "testdata/subgraph.golden",
 		},
 		{
-			in:  "../../testdata/golden/semi.dot",
-			out: "../../testdata/golden/semi.golden",
+			in:  "testdata/semi.dot",
+			out: "testdata/semi.golden",
 		},
 		{
-			in:  "../../testdata/golden/empty_attr.dot",
-			out: "../../testdata/golden/empty_attr.golden",
+			in:  "testdata/empty_attr.dot",
+			out: "testdata/empty_attr.golden",
 		},
 		{
-			in:  "../../testdata/golden/attr_lists.dot",
-			out: "../../testdata/golden/attr_lists.golden",
+			in:  "testdata/attr_lists.dot",
+			out: "testdata/attr_lists.golden",
 		},
 		{
-			in:  "../../testdata/golden/attr_sep.dot",
-			out: "../../testdata/golden/attr_sep.golden",
+			in:  "testdata/attr_sep.dot",
+			out: "testdata/attr_sep.golden",
 		},
-		{in: "../../testdata/golden/subgraph_vertex.dot"},
+		{in: "testdata/subgraph_vertex.dot"},
 		{
-			in:  "../../testdata/golden/port.dot",
-			out: "../../testdata/golden/port.golden",
+			in:  "testdata/port.dot",
+			out: "testdata/port.golden",
 		},
 	}
 	for _, g := range golden {
