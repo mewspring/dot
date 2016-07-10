@@ -304,19 +304,13 @@ func NewID(id interface{}) (string, error) {
 	}
 	s := string(i.Lit)
 
-	// In quoted strings in DOT, the only escaped character is double-quote (").
-	// That is, in quoted strings, the dyad \" is converted to "; all other
-	// characters are left unchanged. In particular, \\ remains \\.
-	//
-	// Convert \" to "
-	s = strings.Replace(s, `\"`, `"`, -1)
-
 	// As another aid for readability, dot allows double-quoted strings to span
 	// multiple physical lines using the standard C convention of a backslash
 	// immediately preceding a newline character.
-	//
-	// Strip "\\\n" sequences.
-	s = strings.Replace(s, "\\\n", "", -1)
+	if strings.HasPrefix(s, `"`) && strings.HasSuffix(s, `"`) {
+		// Strip "\\\n" sequences.
+		s = strings.Replace(s, "\\\n", "", -1)
+	}
 
 	// TODO: Add support for concatenated using a '+' operator.
 
