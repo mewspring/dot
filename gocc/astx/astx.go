@@ -141,14 +141,14 @@ func NewEdge(directed, vertex, optTo interface{}) (*ast.Edge, error) {
 
 // NewAttrStmt returns a new attribute statement based on the given graph
 // component kind and attributes.
-func NewAttrStmt(kind, attrs interface{}) (*ast.AttrStmt, error) {
+func NewAttrStmt(kind, optAttrs interface{}) (*ast.AttrStmt, error) {
 	k, ok := kind.(ast.Kind)
 	if !ok {
 		return nil, errutil.Newf("invalid graph component kind type; expected ast.Kind, got %T", kind)
 	}
-	as, ok := attrs.([]*ast.Attr)
-	if !ok {
-		return nil, errutil.Newf("invalid attributes type; expected []*ast.Attr, got %T", attrs)
+	as, ok := optAttrs.([]*ast.Attr)
+	if optAttrs != nil && !ok {
+		return nil, errutil.Newf("invalid attributes type; expected []*ast.Attr, got %T", optAttrs)
 	}
 	return &ast.AttrStmt{Kind: k, Attrs: as}, nil
 }
