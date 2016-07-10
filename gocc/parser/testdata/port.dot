@@ -2,4 +2,10 @@ digraph {
 	A:ne -> B:sw
 	C:foo -> D:bar:se
 	E:_ -> F
+	G:n
+	H:e
+	I:s
+	J:w
+	K:nw
+	L:c
 }
