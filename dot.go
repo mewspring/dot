@@ -6,8 +6,8 @@ import (
 	"io/ioutil"
 
 	"github.com/graphism/dot/ast"
-	"github.com/graphism/dot/gocc/lexer"
-	"github.com/graphism/dot/gocc/parser"
+	"github.com/graphism/dot/internal/lexer"
+	"github.com/graphism/dot/internal/parser"
 	"github.com/mewkiz/pkg/errutil"
 )
 

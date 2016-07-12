@@ -14,40 +14,40 @@ func TestParseFile(t *testing.T) {
 		in  string
 		out string
 	}{
-		{in: "../gocc/parser/testdata/empty.dot"},
-		{in: "../gocc/parser/testdata/graph.dot"},
-		{in: "../gocc/parser/testdata/digraph.dot"},
-		{in: "../gocc/parser/testdata/strict.dot"},
-		{in: "../gocc/parser/testdata/multi.dot"},
-		{in: "../gocc/parser/testdata/named_graph.dot"},
-		{in: "../gocc/parser/testdata/node_stmt.dot"},
-		{in: "../gocc/parser/testdata/edge_stmt.dot"},
-		{in: "../gocc/parser/testdata/attr_stmt.dot"},
-		{in: "../gocc/parser/testdata/attr.dot"},
+		{in: "../internal/parser/testdata/empty.dot"},
+		{in: "../internal/parser/testdata/graph.dot"},
+		{in: "../internal/parser/testdata/digraph.dot"},
+		{in: "../internal/parser/testdata/strict.dot"},
+		{in: "../internal/parser/testdata/multi.dot"},
+		{in: "../internal/parser/testdata/named_graph.dot"},
+		{in: "../internal/parser/testdata/node_stmt.dot"},
+		{in: "../internal/parser/testdata/edge_stmt.dot"},
+		{in: "../internal/parser/testdata/attr_stmt.dot"},
+		{in: "../internal/parser/testdata/attr.dot"},
 		{
-			in:  "../gocc/parser/testdata/subgraph.dot",
-			out: "../gocc/parser/testdata/subgraph.golden",
+			in:  "../internal/parser/testdata/subgraph.dot",
+			out: "../internal/parser/testdata/subgraph.golden",
 		},
 		{
-			in:  "../gocc/parser/testdata/semi.dot",
-			out: "../gocc/parser/testdata/semi.golden",
+			in:  "../internal/parser/testdata/semi.dot",
+			out: "../internal/parser/testdata/semi.golden",
 		},
 		{
-			in:  "../gocc/parser/testdata/empty_attr.dot",
-			out: "../gocc/parser/testdata/empty_attr.golden",
+			in:  "../internal/parser/testdata/empty_attr.dot",
+			out: "../internal/parser/testdata/empty_attr.golden",
 		},
 		{
-			in:  "../gocc/parser/testdata/attr_lists.dot",
-			out: "../gocc/parser/testdata/attr_lists.golden",
+			in:  "../internal/parser/testdata/attr_lists.dot",
+			out: "../internal/parser/testdata/attr_lists.golden",
 		},
 		{
-			in:  "../gocc/parser/testdata/attr_sep.dot",
-			out: "../gocc/parser/testdata/attr_sep.golden",
+			in:  "../internal/parser/testdata/attr_sep.dot",
+			out: "../internal/parser/testdata/attr_sep.golden",
 		},
-		{in: "../gocc/parser/testdata/subgraph_vertex.dot"},
+		{in: "../internal/parser/testdata/subgraph_vertex.dot"},
 		{
-			in:  "../gocc/parser/testdata/port.dot",
-			out: "../gocc/parser/testdata/port.golden",
+			in:  "../internal/parser/testdata/port.dot",
+			out: "../internal/parser/testdata/port.golden",
 		},
 	}
 	for _, g := range golden {
