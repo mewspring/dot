@@ -31,7 +31,7 @@ before_install:
   - go get github.com/mattn/goveralls
   - go get github.com/goccmack/gocc
   - go get github.com/mewkiz/cmd/imgcmp
-  - make -C $HOME/gopath/src/github.com/graphism/dot/gocc gen
+  - make -C $HOME/gopath/src/github.com/graphism/dot/internal gen
   - make -C $HOME/gopath/src/github.com/graphism/dot/testdata fetch
 
 install:
