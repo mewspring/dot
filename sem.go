@@ -49,7 +49,7 @@ func checkStmt(graph *ast.Graph, stmt ast.Stmt) error {
 
 // checkNodeStmt validates the semantics of the given node statement.
 func checkNodeStmt(graph *ast.Graph, stmt *ast.NodeStmt) error {
-	if err := checkNodeID(graph, stmt.NodeID); err != nil {
+	if err := checkNode(graph, stmt.Node); err != nil {
 		return errutil.Err(err)
 	}
 	for _, attr := range stmt.Attrs {
@@ -134,8 +134,8 @@ func checkSubgraph(graph *ast.Graph, subgraph *ast.Subgraph) error {
 // checkVertex validates the semantics of the given vertex.
 func checkVertex(graph *ast.Graph, vertex ast.Vertex) error {
 	switch vertex := vertex.(type) {
-	case *ast.NodeID:
-		return checkNodeID(graph, vertex)
+	case *ast.Node:
+		return checkNode(graph, vertex)
 	case *ast.Subgraph:
 		return checkSubgraph(graph, vertex)
 	default:
@@ -143,8 +143,8 @@ func checkVertex(graph *ast.Graph, vertex ast.Vertex) error {
 	}
 }
 
-// checNodeID validates the semantics of the given node ID.
-func checkNodeID(graph *ast.Graph, node *ast.NodeID) error {
+// checNode validates the semantics of the given node.
+func checkNode(graph *ast.Graph, node *ast.Node) error {
 	// TODO: Check node.ID for duplicates?
 	// TODO: Validate node.Port.
 	return nil

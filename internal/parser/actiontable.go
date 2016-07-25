@@ -1160,24 +1160,24 @@ var actionTab = actionTable{
 		actions: [numSymbols]action{
 			nil,        /* INVALID */
 			nil,        /* $ */
-			reduce(47), /* {, reduce: NodeID */
-			reduce(47), /* }, reduce: NodeID */
+			reduce(47), /* {, reduce: Node */
+			reduce(47), /* }, reduce: Node */
 			nil,        /* empty */
 			nil,        /* strict */
-			reduce(47), /* graphx, reduce: NodeID */
+			reduce(47), /* graphx, reduce: Node */
 			nil,        /* digraph */
-			reduce(47), /* ;, reduce: NodeID */
-			reduce(47), /* --, reduce: NodeID */
-			reduce(47), /* ->, reduce: NodeID */
-			reduce(47), /* node, reduce: NodeID */
-			reduce(47), /* edge, reduce: NodeID */
-			reduce(47), /* [, reduce: NodeID */
+			reduce(47), /* ;, reduce: Node */
+			reduce(47), /* --, reduce: Node */
+			reduce(47), /* ->, reduce: Node */
+			reduce(47), /* node, reduce: Node */
+			reduce(47), /* edge, reduce: Node */
+			reduce(47), /* [, reduce: Node */
 			nil,        /* ] */
 			nil,        /* , */
 			nil,        /* = */
-			reduce(47), /* subgraph, reduce: NodeID */
+			reduce(47), /* subgraph, reduce: Node */
 			nil,        /* : */
-			reduce(47), /* id, reduce: NodeID */
+			reduce(47), /* id, reduce: Node */
 
 		},
 	},

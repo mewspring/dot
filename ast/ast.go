@@ -102,8 +102,8 @@ type Stmt interface {
 //
 //    A [color=blue]
 type NodeStmt struct {
-	// Node ID.
-	NodeID *NodeID
+	// Node.
+	Node *Node
 	// Node attributes.
 	Attrs []*Attr
 }
@@ -111,7 +111,7 @@ type NodeStmt struct {
 // String returns the string representation of the node statement.
 func (e *NodeStmt) String() string {
 	buf := new(bytes.Buffer)
-	buf.WriteString(e.NodeID.String())
+	buf.WriteString(e.Node.String())
 	if len(e.Attrs) > 0 {
 		buf.WriteString(" [")
 		for i, attr := range e.Attrs {
@@ -297,7 +297,7 @@ func (*Subgraph) isStmt() {}
 
 // A Vertex represents a vertex, and has one of the following underlying types.
 //
-//    *NodeID
+//    *Node
 //    *Subgraph
 type Vertex interface {
 	fmt.Stringer
@@ -308,21 +308,21 @@ type Vertex interface {
 
 // --- [ Node identifier ] -----------------------------------------------------
 
-// A NodeID represents a node vertex.
+// A Node represents a node vertex.
 //
 // Examples.
 //
 //    A
 //    A:nw
-type NodeID struct {
+type Node struct {
 	// Node ID.
 	ID string
 	// Node port; or nil if none.
 	Port *Port
 }
 
-// String returns the string representation of the node ID.
-func (n *NodeID) String() string {
+// String returns the string representation of the node.
+func (n *Node) String() string {
 	if n.Port != nil {
 		return fmt.Sprintf("%s%s", n.ID, n.Port)
 	}
@@ -392,5 +392,5 @@ func (c CompassPoint) String() string {
 }
 
 // isVertex ensures that only vertices can be assigned to the Vertex interface.
-func (*NodeID) isVertex()   {}
+func (*Node) isVertex()     {}
 func (*Subgraph) isVertex() {}

@@ -85,18 +85,18 @@ func AppendStmt(list, stmt interface{}) ([]ast.Stmt, error) {
 
 // --- [ Node statement ] ------------------------------------------------------
 
-// NewNodeStmt returns a new node statement based on the given node ID and
-// optional attributes.
-func NewNodeStmt(nodeID, optAttrs interface{}) (*ast.NodeStmt, error) {
-	n, ok := nodeID.(*ast.NodeID)
+// NewNodeStmt returns a new node statement based on the given node and optional
+// attributes.
+func NewNodeStmt(node, optAttrs interface{}) (*ast.NodeStmt, error) {
+	n, ok := node.(*ast.Node)
 	if !ok {
-		return nil, errutil.Newf("invalid node ID type; expected *ast.NodeID, got %T", nodeID)
+		return nil, errutil.Newf("invalid node type; expected *ast.Node, got %T", node)
 	}
 	as, ok := optAttrs.([]*ast.Attr)
 	if optAttrs != nil && !ok {
 		return nil, errutil.Newf("invalid attributes type; expected []*ast.Attr, got %T", optAttrs)
 	}
-	return &ast.NodeStmt{NodeID: n, Attrs: as}, nil
+	return &ast.NodeStmt{Node: n, Attrs: as}, nil
 }
 
 // --- [ Edge statement ] ------------------------------------------------------
@@ -224,8 +224,8 @@ func NewSubgraph(optID, optStmts interface{}) (*ast.Subgraph, error) {
 
 // --- [ Node identifier ] -----------------------------------------------------
 
-// NewNodeID returns a new node ID based on the given node id and optional port.
-func NewNodeID(id, optPort interface{}) (*ast.NodeID, error) {
+// NewNode returns a new node based on the given node id and optional port.
+func NewNode(id, optPort interface{}) (*ast.Node, error) {
 	i, ok := id.(string)
 	if !ok {
 		return nil, errutil.Newf("invalid ID type; expected string, got %T", id)
@@ -234,7 +234,7 @@ func NewNodeID(id, optPort interface{}) (*ast.NodeID, error) {
 	if optPort != nil && !ok {
 		return nil, errutil.Newf("invalid port type; expected *ast.Port, got %T", optPort)
 	}
-	return &ast.NodeID{ID: i, Port: p}, nil
+	return &ast.Node{ID: i, Port: p}, nil
 }
 
 // NewPort returns a new port based on the given id and optional compass point.

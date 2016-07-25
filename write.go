@@ -14,7 +14,7 @@ import (
 // given gonum graph. The dot AST graph may later be manually annotated with
 // additional attributes.
 func NewGraph(src graph.Directed) *ast.Graph {
-	gen := &dotGen{ids: make(map[int]*ast.NodeID)}
+	gen := &dotGen{ids: make(map[int]*ast.Node)}
 	dst := &ast.Graph{Directed: true}
 
 	// Add nodes.
@@ -25,7 +25,7 @@ func NewGraph(src graph.Directed) *ast.Graph {
 	}
 	sort.Ints(keys)
 	for _, key := range keys {
-		stmt := &ast.NodeStmt{NodeID: gen.node(key)}
+		stmt := &ast.NodeStmt{Node: gen.node(key)}
 		dst.Stmts = append(dst.Stmts, stmt)
 	}
 
@@ -49,17 +49,17 @@ func NewGraph(src graph.Directed) *ast.Graph {
 // A dotGen keeps track of the information required for generating a dot AST
 // graph from a gonum graph.
 type dotGen struct {
-	// ids maps from gonum node ID to dot AST node ID.
-	ids map[int]*ast.NodeID
+	// ids maps from gonum node ID to dot AST node.
+	ids map[int]*ast.Node
 }
 
 // node returns the dot AST node ID corresponding to the given gonum node ID,
 // generating a new such node ID if none exist.
-func (gen *dotGen) node(id int) *ast.NodeID {
+func (gen *dotGen) node(id int) *ast.Node {
 	if n, ok := gen.ids[id]; ok {
 		return n
 	}
-	n := &ast.NodeID{ID: strconv.Itoa(id)}
+	n := &ast.Node{ID: strconv.Itoa(id)}
 	gen.ids[id] = n
 	return n
 }

@@ -70,7 +70,7 @@ func (gen *generator) edge(dst graph.DirectedBuilder, from, to graph.Node) graph
 func (gen *generator) addStmt(dst graph.DirectedBuilder, stmt ast.Stmt) {
 	switch stmt := stmt.(type) {
 	case *ast.NodeStmt:
-		gen.node(dst, stmt.NodeID.ID)
+		gen.node(dst, stmt.Node.ID)
 	case *ast.EdgeStmt:
 		gen.addEdgeStmt(dst, stmt)
 	case *ast.AttrStmt:
@@ -100,7 +100,7 @@ func (gen *generator) addEdgeStmt(dst graph.DirectedBuilder, e *ast.EdgeStmt) {
 // addVertex adds the given vertex to the graph, and returns its set of nodes.
 func (gen *generator) addVertex(dst graph.DirectedBuilder, v ast.Vertex) []graph.Node {
 	switch v := v.(type) {
-	case *ast.NodeID:
+	case *ast.Node:
 		n := gen.node(dst, v.ID)
 		return []graph.Node{n}
 	case *ast.Subgraph:

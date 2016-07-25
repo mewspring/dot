@@ -215,21 +215,21 @@ OptSemi
 
 // --- [ Node statement ] ------------------------------------------------------
 
-// NodeStmt : NodeID [ AttrList ]
+// NodeStmt : Node [ AttrList ]
 
 NodeStmt
-	: NodeID OptAttrList                          << astx.NewNodeStmt($0, $1) >>
+	: Node OptAttrList                          << astx.NewNodeStmt($0, $1) >>
 ;
 
 // --- [ Edge statement ] ------------------------------------------------------
 
-// EdgeStmt : ( NodeID | Subgraph ) Edge [ AttrList ]
+// EdgeStmt : ( Node | Subgraph ) Edge [ AttrList ]
 
 EdgeStmt
 	: Vertex Edge OptAttrList                     << astx.NewEdgeStmt($0, $1, $2) >>
 ;
 
-// Edge : ( "--" | "-->" ) ( NodeID | Subgraph ) [ Edge ]
+// Edge : ( "--" | "-->" ) ( Node | Subgraph ) [ Edge ]
 
 Edge
 	: DirectedEdge Vertex OptEdge                 << astx.NewEdge($0, $1, $2) >>
@@ -313,16 +313,16 @@ OptSubgraphID
 // === [ Vertices ] ============================================================
 
 Vertex
-	: NodeID
+	: Node
 	| Subgraph
 ;
 
 // --- [ Node identifier ] -----------------------------------------------------
 
-// NodeID : ID [ Port ]
+// Node : ID [ Port ]
 
-NodeID
-	: ID OptPort                                  << astx.NewNodeID($0, $1) >>
+Node
+	: ID OptPort                                  << astx.NewNode($0, $1) >>
 ;
 
 // Port

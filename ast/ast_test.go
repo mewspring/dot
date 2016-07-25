@@ -86,6 +86,6 @@ var (
 
 // Verify that all vertices implement the Vertex interface.
 var (
-	_ ast.Vertex = &ast.NodeID{}
+	_ ast.Vertex = &ast.Node{}
 	_ ast.Vertex = &ast.Subgraph{}
 )

@@ -214,7 +214,7 @@ var productionsTable = ProdTab{
 		},
 	},
 	ProdTabEntry{
-		String: `NodeStmt : NodeID OptAttrList	<< astx.NewNodeStmt(X[0], X[1]) >>`,
+		String: `NodeStmt : Node OptAttrList	<< astx.NewNodeStmt(X[0], X[1]) >>`,
 		Id:         "NodeStmt",
 		NTType:     9,
 		Index:      19,
@@ -474,7 +474,7 @@ var productionsTable = ProdTab{
 		},
 	},
 	ProdTabEntry{
-		String: `Vertex : NodeID	<<  >>`,
+		String: `Vertex : Node	<<  >>`,
 		Id:         "Vertex",
 		NTType:     24,
 		Index:      45,
@@ -494,13 +494,13 @@ var productionsTable = ProdTab{
 		},
 	},
 	ProdTabEntry{
-		String: `NodeID : ID OptPort	<< astx.NewNodeID(X[0], X[1]) >>`,
-		Id:         "NodeID",
+		String: `Node : ID OptPort	<< astx.NewNode(X[0], X[1]) >>`,
+		Id:         "Node",
 		NTType:     25,
 		Index:      47,
 		NumSymbols: 2,
 		ReduceFunc: func(X []Attrib) (Attrib, error) {
-			return astx.NewNodeID(X[0], X[1])
+			return astx.NewNode(X[0], X[1])
 		},
 	},
 	ProdTabEntry{
