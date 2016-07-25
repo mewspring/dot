@@ -92,7 +92,7 @@ _decimals      : _decimal_digit { _decimal_digit } ;
 //    2) a numeral [-]?(.[0-9]+ | [0-9]+(.[0-9]*)? );
 //
 //    3) any double-quoted string ("...") possibly containing escaped quotes
-//       (\")1;
+//       (\");
 //
 //    4) an HTML string (<...>).
 
@@ -134,10 +134,8 @@ _html_char
 ;
 
 _html_chars : { _html_char } ;
-
-_html_tag : '<' ( _html_chars ) '>' ;
-
-_html_lit : '<' { _html_chars | _html_tag } '>' ;
+_html_tag   : '<' _html_chars '>' ;
+_html_lit   : '<' { _html_chars | _html_tag } '>' ;
 
 // The language supports C++-style comments: /* */ and //. In addition, a line
 // beginning with a '#' character is considered a line output from a C
@@ -169,7 +167,7 @@ File
 
 // === [ Graphs ] ==============================================================
 
-// Graph : [ "strict" ] ( "graph" | "digraph" ) [ ID ] "{" OptStmtList "}"
+// Graph : [ "strict" ] ( "graph" | "digraph" ) [ ID ] "{" [ StmtList ] "}"
 
 Graph
 	: OptStrict DirectedGraph OptID
@@ -201,13 +199,6 @@ OptStmtList
 	: empty
 	| StmtList
 ;
-
-// Stmt
-//    : NodeStmt
-//    | EdgeStmt
-//    | AttrStmt
-//    | Attr
-//    | Subgraph
 
 Stmt
 	: NodeStmt
@@ -308,7 +299,7 @@ Attr
 
 // --- [ Subgraph ] ------------------------------------------------------------
 
-// Subgraph : [ "subgraph" [ ID ] ] "{" OptStmtList "}"
+// Subgraph : [ "subgraph" [ ID ] ] "{" [ StmtList ] "}"
 
 Subgraph
 	: OptSubgraphID "{" OptStmtList "}"           << astx.NewSubgraph($0, $2) >>
