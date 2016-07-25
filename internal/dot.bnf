@@ -62,19 +62,24 @@ _ascii_char
 	| '\x5D' - '\x7F'
 ;
 
+_ascii_letter
+	: 'a' - 'z'
+	| 'A' - 'Z'
+;
+
+_ascii_digit : '0' - '9' ;
+
 _unicode_char
 	: _ascii_char
 	| _unicode_byte
 ;
-
-_ascii_letter  : 'a' - 'z' | 'A' - 'Z' ;
-_ascii_digit   : '0' - '9' ;
 
 _unicode_byte
 	: '\u0080' - '\uFFFC'
 	// skip invalid code point (\uFFFD)
 	| '\uFFFE' - '\U0010FFFF'
 ;
+
 _letter        : _ascii_letter | _unicode_byte | '_' ;
 _decimal_digit : _ascii_digit ;
 _decimals      : _decimal_digit { _decimal_digit } ;
@@ -146,9 +151,7 @@ _line_comment
 _block_comment : '/' '*' { . | '*' } '*' '/' ;
 !comment       : _line_comment | _block_comment ;
 
-// TODO: Check which whitespace characters are allowed to separate tokens.
-
-!whitespace : ' ' | '\t' | '\v' | '\f' | '\r' | '\n' ;
+!whitespace : ' ' | '\t' | '\r' | '\n' ;
 
 // ### [ Syntax ] ##############################################################
 
