@@ -1,7 +1,3 @@
-// TODO: Consider which types are required as pointers (to be used as
-// SOME/NONE), and which may be defined as values. Decide whether to define
-// those types as values, or keep them as pointers for consistency.
-
 // Package ast declares the types used to represent abstract syntax trees of
 // Graphviz DOT graphs.
 package ast
