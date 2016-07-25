@@ -194,10 +194,8 @@ StmtList
 	| StmtList Stmt OptSemi                       << astx.AppendStmt($0, $1) >>
 ;
 
-// TODO: Verify if nil is needed, or if empty returns nil by default.
-
 OptStmtList
-	: empty                                       << nil, nil >>
+	: empty
 	| StmtList
 ;
 
@@ -248,10 +246,8 @@ DirectedEdge
 	| "->"                                        << true, nil >>
 ;
 
-// TODO: Verify if nil is needed, or if empty returns nil by default.
-
 OptEdge
-	: empty                                       << nil, nil >>
+	: empty
 	| Edge
 ;
 
@@ -276,10 +272,8 @@ AttrList
 	| AttrList "[" OptAList "]"                   << astx.AppendAttrList($0, $2) >>
 ;
 
-// TODO: Verify if nil is needed, or if empty returns nil by default.
-
 OptAttrList
-	: empty                                       << nil, nil >>
+	: empty
 	| AttrList
 ;
 
@@ -292,10 +286,8 @@ AList
 	| AList Attr OptSep                           << astx.AppendAttr($0, $1) >>
 ;
 
-// TODO: Verify if nil is needed, or if empty returns nil by default.
-
 OptAList
-	: empty                                       << nil, nil >>
+	: empty
 	| AList
 ;
 
@@ -319,10 +311,8 @@ Subgraph
 	: OptSubgraphID "{" OptStmtList "}"           << astx.NewSubgraph($0, $2) >>
 ;
 
-// TODO: Verify if nil is needed, or if empty returns nil by default.
-
 OptSubgraphID
-	: empty                                       << nil, nil >>
+	: empty
 	| subgraph OptID                              << $1, nil >>
 ;
 
@@ -357,10 +347,8 @@ Port
 	| ":" ID ":" ID                               << astx.NewPort($1, $3) >>
 ;
 
-// TODO: Verify if nil is needed, or if empty returns nil by default.
-
 OptPort
-	: empty                                       << nil, nil >>
+	: empty
 	| Port
 ;
 
