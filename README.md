@@ -10,14 +10,7 @@ This package provides access to [Graphviz DOT] files.
 
 ## Installation
 
-Install [Gocc] `go get github.com/goccmack/gocc`.
-
-[Gocc]: https://github.com/goccmack/gocc
-
 ```
-$ go get -d github.com/graphism/dot
-$ cd ${GOPATH}/src/github.com/graphism/dot/internal
-$ make gen
 $ go get github.com/graphism/dot/...
 ```
 
