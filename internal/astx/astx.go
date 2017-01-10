@@ -50,11 +50,11 @@ func NewGraph(strict, directed, optID, optStmts interface{}) (*ast.Graph, error)
 	}
 	i, ok := optID.(string)
 	if optID != nil && !ok {
-		return nil, errutil.Newf("invalid ID type; expected string, got %T", optID)
+		return nil, errutil.Newf("invalid ID type; expected string or nil, got %T", optID)
 	}
 	ss, ok := optStmts.([]ast.Stmt)
 	if optStmts != nil && !ok {
-		return nil, errutil.Newf("invalid statements type; expected []ast.Stmt, got %T", optStmts)
+		return nil, errutil.Newf("invalid statements type; expected []ast.Stmt or nil, got %T", optStmts)
 	}
 	return &ast.Graph{Strict: s, Directed: d, ID: i, Stmts: ss}, nil
 }
@@ -94,7 +94,7 @@ func NewNodeStmt(node, optAttrs interface{}) (*ast.NodeStmt, error) {
 	}
 	as, ok := optAttrs.([]*ast.Attr)
 	if optAttrs != nil && !ok {
-		return nil, errutil.Newf("invalid attributes type; expected []*ast.Attr, got %T", optAttrs)
+		return nil, errutil.Newf("invalid attributes type; expected []*ast.Attr or nil, got %T", optAttrs)
 	}
 	return &ast.NodeStmt{Node: n, Attrs: as}, nil
 }
@@ -114,7 +114,7 @@ func NewEdgeStmt(from, to, optAttrs interface{}) (*ast.EdgeStmt, error) {
 	}
 	as, ok := optAttrs.([]*ast.Attr)
 	if optAttrs != nil && !ok {
-		return nil, errutil.Newf("invalid attributes type; expected []*ast.Attr, got %T", optAttrs)
+		return nil, errutil.Newf("invalid attributes type; expected []*ast.Attr or nil, got %T", optAttrs)
 	}
 	return &ast.EdgeStmt{From: f, To: t, Attrs: as}, nil
 }
@@ -132,7 +132,7 @@ func NewEdge(directed, vertex, optTo interface{}) (*ast.Edge, error) {
 	}
 	t, ok := optTo.(*ast.Edge)
 	if optTo != nil && !ok {
-		return nil, errutil.Newf("invalid outgoing edge type; expected *ast.Edge, got %T", optTo)
+		return nil, errutil.Newf("invalid outgoing edge type; expected *ast.Edge or nil, got %T", optTo)
 	}
 	return &ast.Edge{Directed: d, Vertex: v, To: t}, nil
 }
@@ -148,7 +148,7 @@ func NewAttrStmt(kind, optAttrs interface{}) (*ast.AttrStmt, error) {
 	}
 	as, ok := optAttrs.([]*ast.Attr)
 	if optAttrs != nil && !ok {
-		return nil, errutil.Newf("invalid attributes type; expected []*ast.Attr, got %T", optAttrs)
+		return nil, errutil.Newf("invalid attributes type; expected []*ast.Attr or nil, got %T", optAttrs)
 	}
 	return &ast.AttrStmt{Kind: k, Attrs: as}, nil
 }
@@ -180,11 +180,11 @@ func AppendAttr(list, attr interface{}) ([]*ast.Attr, error) {
 func AppendAttrList(optList, optAttrs interface{}) ([]*ast.Attr, error) {
 	l, ok := optList.([]*ast.Attr)
 	if optList != nil && !ok {
-		return nil, errutil.Newf("invalid attribute list type; expected []*ast.Attr, got %T", optList)
+		return nil, errutil.Newf("invalid attribute list type; expected []*ast.Attr or nil, got %T", optList)
 	}
 	as, ok := optAttrs.([]*ast.Attr)
 	if optAttrs != nil && !ok {
-		return nil, errutil.Newf("invalid attributes type; expected []*ast.Attr, got %T", optAttrs)
+		return nil, errutil.Newf("invalid attributes type; expected []*ast.Attr or nil, got %T", optAttrs)
 	}
 	return append(l, as...), nil
 }
@@ -211,11 +211,11 @@ func NewAttr(key, val interface{}) (*ast.Attr, error) {
 func NewSubgraph(optID, optStmts interface{}) (*ast.Subgraph, error) {
 	i, ok := optID.(string)
 	if optID != nil && !ok {
-		return nil, errutil.Newf("invalid ID type; expected string, got %T", optID)
+		return nil, errutil.Newf("invalid ID type; expected string or nil, got %T", optID)
 	}
 	ss, ok := optStmts.([]ast.Stmt)
 	if optStmts != nil && !ok {
-		return nil, errutil.Newf("invalid statements type; expected []ast.Stmt, got %T", optStmts)
+		return nil, errutil.Newf("invalid statements type; expected []ast.Stmt or nil, got %T", optStmts)
 	}
 	return &ast.Subgraph{ID: i, Stmts: ss}, nil
 }
@@ -232,14 +232,14 @@ func NewNode(id, optPort interface{}) (*ast.Node, error) {
 	}
 	p, ok := optPort.(*ast.Port)
 	if optPort != nil && !ok {
-		return nil, errutil.Newf("invalid port type; expected *ast.Port, got %T", optPort)
+		return nil, errutil.Newf("invalid port type; expected *ast.Port or nil, got %T", optPort)
 	}
 	return &ast.Node{ID: i, Port: p}, nil
 }
 
 // NewPort returns a new port based on the given id and optional compass point.
 func NewPort(id, optCompassPoint interface{}) (*ast.Port, error) {
-	// NOTE: If optCompassPoint is nil, id may be either an identifier or a
+	// Note, if optCompassPoint is nil, id may be either an identifier or a
 	// compass point.
 	//
 	// The following strings are valid compass points:
@@ -260,7 +260,7 @@ func NewPort(id, optCompassPoint interface{}) (*ast.Port, error) {
 
 	c, ok := optCompassPoint.(string)
 	if optCompassPoint != nil && !ok {
-		return nil, errutil.Newf("invalid compass point type; expected string, got %T", optCompassPoint)
+		return nil, errutil.Newf("invalid compass point type; expected string or nil, got %T", optCompassPoint)
 	}
 	compassPoint, _ := getCompassPoint(c)
 	return &ast.Port{ID: i, CompassPoint: compassPoint}, nil

@@ -3,13 +3,11 @@
 package lexer
 
 import (
-
 	// "fmt"
-	// "github.com/graphism/dot/internal/util"
-
 	"io/ioutil"
 	"unicode/utf8"
 
+	// "github.com/graphism/dot/internal/util"
 	"github.com/graphism/dot/internal/token"
 )
 
@@ -54,7 +52,7 @@ func (this *Lexer) Scan() (tok *token.Token) {
 		tok.Pos.Offset, tok.Pos.Line, tok.Pos.Column = this.pos, this.line, this.column
 		return
 	}
-	start, end := this.pos, 0
+	start, startLine, startColumn, end := this.pos, this.line, this.column, 0
 	tok.Type = token.INVALID
 	state, rune1, size := 0, rune(-1), 0
 	for state != -1 {
@@ -66,17 +64,6 @@ func (this *Lexer) Scan() (tok *token.Token) {
 		} else {
 			rune1, size = utf8.DecodeRune(this.src[this.pos:])
 			this.pos += size
-		}
-		switch rune1 {
-		case '\n':
-			this.line++
-			this.column = 1
-		case '\r':
-			this.column = 1
-		case '\t':
-			this.column += 4
-		default:
-			this.column++
 		}
 
 		// Production start
@@ -101,6 +88,19 @@ func (this *Lexer) Scan() (tok *token.Token) {
 		// Debug end
 
 		if state != -1 {
+
+			switch rune1 {
+			case '\n':
+				this.line++
+				this.column = 1
+			case '\r':
+				this.column = 1
+			case '\t':
+				this.column += 4
+			default:
+				this.column++
+			}
+
 			switch {
 			case ActTab[state].Accept != -1:
 				tok.Type = ActTab[state].Accept
@@ -108,7 +108,7 @@ func (this *Lexer) Scan() (tok *token.Token) {
 				end = this.pos
 			case ActTab[state].Ignore != "":
 				// fmt.Printf("\t Ignore(%s)\n", string(act))
-				start = this.pos
+				start, startLine, startColumn = this.pos, this.line, this.column
 				state = 0
 				if start >= len(this.src) {
 					tok.Type = token.EOF
@@ -127,9 +127,10 @@ func (this *Lexer) Scan() (tok *token.Token) {
 	} else {
 		tok.Lit = []byte{}
 	}
-	tok.Pos.Offset = start
-	tok.Pos.Column = this.column
-	tok.Pos.Line = this.line
+	tok.Pos.Offset, tok.Pos.Line, tok.Pos.Column = start, startLine, startColumn
+
+	// fmt.Printf("Token at %s: %s \"%s\"\n", tok.String(), token.TokMap.Id(tok.Type), tok.Lit)
+
 	return
 }
 

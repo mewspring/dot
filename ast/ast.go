@@ -16,8 +16,8 @@ import (
 //    digraph G {
 //       A -> B
 //    }
-//    digraph H {
-//       C -> D
+//    graph H {
+//       C - D
 //    }
 type File struct {
 	// Graphs.
@@ -369,6 +369,8 @@ const (
 // String returns the string representation of the compass point.
 func (c CompassPoint) String() string {
 	switch c {
+	case CompassPointDefault:
+		return "_"
 	case CompassPointNorth:
 		return "n"
 	case CompassPointNorthEast:
@@ -388,7 +390,7 @@ func (c CompassPoint) String() string {
 	case CompassPointCenter:
 		return "c"
 	}
-	return "_"
+	panic(fmt.Sprintf("invalid compass point (%d)", uint(c)))
 }
 
 // isVertex ensures that only vertices can be assigned to the Vertex interface.

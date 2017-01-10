@@ -218,7 +218,7 @@ OptSemi
 // NodeStmt : Node [ AttrList ]
 
 NodeStmt
-	: Node OptAttrList                          << astx.NewNodeStmt($0, $1) >>
+	: Node OptAttrList                            << astx.NewNodeStmt($0, $1) >>
 ;
 
 // --- [ Edge statement ] ------------------------------------------------------
