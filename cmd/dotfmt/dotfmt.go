@@ -14,7 +14,7 @@ import (
 	"os"
 
 	"github.com/graphism/dot"
-	"github.com/mewkiz/pkg/errutil"
+	"github.com/pkg/errors"
 )
 
 func main() {
@@ -45,7 +45,7 @@ func dotfmt(path, output string, inplace bool) error {
 	// Parse input file.
 	file, err := dot.ParseFile(path)
 	if err != nil {
-		return errutil.Err(err)
+		return errors.WithStack(err)
 	}
 
 	// Write to standard output.
@@ -60,7 +60,7 @@ func dotfmt(path, output string, inplace bool) error {
 	if len(output) > 0 {
 		f, err := os.Create(output)
 		if err != nil {
-			return errutil.Err(err)
+			return errors.WithStack(err)
 		}
 		defer f.Close()
 		w = f
@@ -68,7 +68,7 @@ func dotfmt(path, output string, inplace bool) error {
 
 	// Write to output stream.
 	if _, err := fmt.Fprintln(w, file); err != nil {
-		return errutil.Err(err)
+		return errors.WithStack(err)
 	}
 
 	return nil

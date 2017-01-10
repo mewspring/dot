@@ -17,7 +17,7 @@ import (
 	"github.com/gonum/graph/simple"
 	"github.com/graphism/dot"
 	"github.com/graphism/dot/ast"
-	"github.com/mewkiz/pkg/errutil"
+	"github.com/pkg/errors"
 )
 
 func main() {
@@ -49,10 +49,10 @@ func flow(path, output string, inplace bool) error {
 	// Parse input file.
 	file, err := dot.ParseFile(path)
 	if err != nil {
-		return errutil.Err(err)
+		return errors.WithStack(err)
 	}
 	if len(file.Graphs) != 1 {
-		return errutil.Newf("invalid number of graphs in %q; expected 1, got %d", path, len(file.Graphs))
+		return errors.Errorf("invalid number of graphs in %q; expected 1, got %d", path, len(file.Graphs))
 	}
 
 	// Convert back and forth to gonum, thus stripping all non-essential
@@ -75,7 +75,7 @@ func flow(path, output string, inplace bool) error {
 	if len(output) > 0 {
 		f, err := os.Create(output)
 		if err != nil {
-			return errutil.Err(err)
+			return errors.WithStack(err)
 		}
 		defer f.Close()
 		w = f
@@ -83,7 +83,7 @@ func flow(path, output string, inplace bool) error {
 
 	// Write to output stream.
 	if _, err := fmt.Fprintln(w, file); err != nil {
-		return errutil.Err(err)
+		return errors.WithStack(err)
 	}
 
 	return nil

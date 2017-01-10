@@ -8,14 +8,14 @@ import (
 	"github.com/graphism/dot/ast"
 	"github.com/graphism/dot/internal/lexer"
 	"github.com/graphism/dot/internal/parser"
-	"github.com/mewkiz/pkg/errutil"
+	"github.com/pkg/errors"
 )
 
 // ParseFile parses the given Graphviz DOT file into an AST.
 func ParseFile(path string) (*ast.File, error) {
 	buf, err := ioutil.ReadFile(path)
 	if err != nil {
-		return nil, errutil.Err(err)
+		return nil, errors.WithStack(err)
 	}
 	return ParseBytes(buf)
 }
@@ -24,7 +24,7 @@ func ParseFile(path string) (*ast.File, error) {
 func Parse(r io.Reader) (*ast.File, error) {
 	buf, err := ioutil.ReadAll(r)
 	if err != nil {
-		return nil, errutil.Err(err)
+		return nil, errors.WithStack(err)
 	}
 	return ParseBytes(buf)
 }
@@ -35,14 +35,14 @@ func ParseBytes(b []byte) (*ast.File, error) {
 	p := parser.NewParser()
 	file, err := p.Parse(l)
 	if err != nil {
-		return nil, errutil.Err(err)
+		return nil, errors.WithStack(err)
 	}
 	f, ok := file.(*ast.File)
 	if !ok {
-		return nil, errutil.Newf("invalid file type; expected *ast.File, got %T", file)
+		return nil, errors.Errorf("invalid file type; expected *ast.File, got %T", file)
 	}
 	if err := check(f); err != nil {
-		return nil, errutil.Err(err)
+		return nil, errors.WithStack(err)
 	}
 	return f, nil
 }

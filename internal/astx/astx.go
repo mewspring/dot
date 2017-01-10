@@ -7,7 +7,7 @@ import (
 
 	"github.com/graphism/dot/ast"
 	"github.com/graphism/dot/internal/token"
-	"github.com/mewkiz/pkg/errutil"
+	"github.com/pkg/errors"
 )
 
 // === [ File ] ================================================================
@@ -16,7 +16,7 @@ import (
 func NewFile(graph interface{}) (*ast.File, error) {
 	g, ok := graph.(*ast.Graph)
 	if !ok {
-		return nil, errutil.Newf("invalid graph type; expected *ast.Graph, got %T", graph)
+		return nil, errors.Errorf("invalid graph type; expected *ast.Graph, got %T", graph)
 	}
 	return &ast.File{Graphs: []*ast.Graph{g}}, nil
 }
@@ -25,11 +25,11 @@ func NewFile(graph interface{}) (*ast.File, error) {
 func AppendGraph(file, graph interface{}) (*ast.File, error) {
 	f, ok := file.(*ast.File)
 	if !ok {
-		return nil, errutil.Newf("invalid file type; expected *ast.File, got %T", file)
+		return nil, errors.Errorf("invalid file type; expected *ast.File, got %T", file)
 	}
 	g, ok := graph.(*ast.Graph)
 	if !ok {
-		return nil, errutil.Newf("invalid graph type; expected *ast.Graph, got %T", graph)
+		return nil, errors.Errorf("invalid graph type; expected *ast.Graph, got %T", graph)
 	}
 	f.Graphs = append(f.Graphs, g)
 	return f, nil
@@ -42,19 +42,19 @@ func AppendGraph(file, graph interface{}) (*ast.File, error) {
 func NewGraph(strict, directed, optID, optStmts interface{}) (*ast.Graph, error) {
 	s, ok := strict.(bool)
 	if !ok {
-		return nil, errutil.Newf("invalid strictness type; expected bool, got %T", strict)
+		return nil, errors.Errorf("invalid strictness type; expected bool, got %T", strict)
 	}
 	d, ok := directed.(bool)
 	if !ok {
-		return nil, errutil.Newf("invalid direction type; expected bool, got %T", directed)
+		return nil, errors.Errorf("invalid direction type; expected bool, got %T", directed)
 	}
 	i, ok := optID.(string)
 	if optID != nil && !ok {
-		return nil, errutil.Newf("invalid ID type; expected string or nil, got %T", optID)
+		return nil, errors.Errorf("invalid ID type; expected string or nil, got %T", optID)
 	}
 	ss, ok := optStmts.([]ast.Stmt)
 	if optStmts != nil && !ok {
-		return nil, errutil.Newf("invalid statements type; expected []ast.Stmt or nil, got %T", optStmts)
+		return nil, errors.Errorf("invalid statements type; expected []ast.Stmt or nil, got %T", optStmts)
 	}
 	return &ast.Graph{Strict: s, Directed: d, ID: i, Stmts: ss}, nil
 }
@@ -65,7 +65,7 @@ func NewGraph(strict, directed, optID, optStmts interface{}) (*ast.Graph, error)
 func NewStmtList(stmt interface{}) ([]ast.Stmt, error) {
 	s, ok := stmt.(ast.Stmt)
 	if !ok {
-		return nil, errutil.Newf("invalid statement type; expected ast.Stmt, got %T", stmt)
+		return nil, errors.Errorf("invalid statement type; expected ast.Stmt, got %T", stmt)
 	}
 	return []ast.Stmt{s}, nil
 }
@@ -74,11 +74,11 @@ func NewStmtList(stmt interface{}) ([]ast.Stmt, error) {
 func AppendStmt(list, stmt interface{}) ([]ast.Stmt, error) {
 	l, ok := list.([]ast.Stmt)
 	if !ok {
-		return nil, errutil.Newf("invalid statement list type; expected []ast.Stmt, got %T", list)
+		return nil, errors.Errorf("invalid statement list type; expected []ast.Stmt, got %T", list)
 	}
 	s, ok := stmt.(ast.Stmt)
 	if !ok {
-		return nil, errutil.Newf("invalid statement type; expected ast.Stmt, got %T", stmt)
+		return nil, errors.Errorf("invalid statement type; expected ast.Stmt, got %T", stmt)
 	}
 	return append(l, s), nil
 }
@@ -90,11 +90,11 @@ func AppendStmt(list, stmt interface{}) ([]ast.Stmt, error) {
 func NewNodeStmt(node, optAttrs interface{}) (*ast.NodeStmt, error) {
 	n, ok := node.(*ast.Node)
 	if !ok {
-		return nil, errutil.Newf("invalid node type; expected *ast.Node, got %T", node)
+		return nil, errors.Errorf("invalid node type; expected *ast.Node, got %T", node)
 	}
 	as, ok := optAttrs.([]*ast.Attr)
 	if optAttrs != nil && !ok {
-		return nil, errutil.Newf("invalid attributes type; expected []*ast.Attr or nil, got %T", optAttrs)
+		return nil, errors.Errorf("invalid attributes type; expected []*ast.Attr or nil, got %T", optAttrs)
 	}
 	return &ast.NodeStmt{Node: n, Attrs: as}, nil
 }
@@ -106,15 +106,15 @@ func NewNodeStmt(node, optAttrs interface{}) (*ast.NodeStmt, error) {
 func NewEdgeStmt(from, to, optAttrs interface{}) (*ast.EdgeStmt, error) {
 	f, ok := from.(ast.Vertex)
 	if !ok {
-		return nil, errutil.Newf("invalid source vertex type; expected ast.Vertex, got %T", from)
+		return nil, errors.Errorf("invalid source vertex type; expected ast.Vertex, got %T", from)
 	}
 	t, ok := to.(*ast.Edge)
 	if !ok {
-		return nil, errutil.Newf("invalid outgoing edge type; expected *ast.Edge, got %T", to)
+		return nil, errors.Errorf("invalid outgoing edge type; expected *ast.Edge, got %T", to)
 	}
 	as, ok := optAttrs.([]*ast.Attr)
 	if optAttrs != nil && !ok {
-		return nil, errutil.Newf("invalid attributes type; expected []*ast.Attr or nil, got %T", optAttrs)
+		return nil, errors.Errorf("invalid attributes type; expected []*ast.Attr or nil, got %T", optAttrs)
 	}
 	return &ast.EdgeStmt{From: f, To: t, Attrs: as}, nil
 }
@@ -124,15 +124,15 @@ func NewEdgeStmt(from, to, optAttrs interface{}) (*ast.EdgeStmt, error) {
 func NewEdge(directed, vertex, optTo interface{}) (*ast.Edge, error) {
 	d, ok := directed.(bool)
 	if !ok {
-		return nil, errutil.Newf("invalid direction type; expected bool, got %T", directed)
+		return nil, errors.Errorf("invalid direction type; expected bool, got %T", directed)
 	}
 	v, ok := vertex.(ast.Vertex)
 	if !ok {
-		return nil, errutil.Newf("invalid destination vertex type; expected ast.Vertex, got %T", vertex)
+		return nil, errors.Errorf("invalid destination vertex type; expected ast.Vertex, got %T", vertex)
 	}
 	t, ok := optTo.(*ast.Edge)
 	if optTo != nil && !ok {
-		return nil, errutil.Newf("invalid outgoing edge type; expected *ast.Edge or nil, got %T", optTo)
+		return nil, errors.Errorf("invalid outgoing edge type; expected *ast.Edge or nil, got %T", optTo)
 	}
 	return &ast.Edge{Directed: d, Vertex: v, To: t}, nil
 }
@@ -144,11 +144,11 @@ func NewEdge(directed, vertex, optTo interface{}) (*ast.Edge, error) {
 func NewAttrStmt(kind, optAttrs interface{}) (*ast.AttrStmt, error) {
 	k, ok := kind.(ast.Kind)
 	if !ok {
-		return nil, errutil.Newf("invalid graph component kind type; expected ast.Kind, got %T", kind)
+		return nil, errors.Errorf("invalid graph component kind type; expected ast.Kind, got %T", kind)
 	}
 	as, ok := optAttrs.([]*ast.Attr)
 	if optAttrs != nil && !ok {
-		return nil, errutil.Newf("invalid attributes type; expected []*ast.Attr or nil, got %T", optAttrs)
+		return nil, errors.Errorf("invalid attributes type; expected []*ast.Attr or nil, got %T", optAttrs)
 	}
 	return &ast.AttrStmt{Kind: k, Attrs: as}, nil
 }
@@ -157,7 +157,7 @@ func NewAttrStmt(kind, optAttrs interface{}) (*ast.AttrStmt, error) {
 func NewAttrList(attr interface{}) ([]*ast.Attr, error) {
 	a, ok := attr.(*ast.Attr)
 	if !ok {
-		return nil, errutil.Newf("invalid attribute type; expected *ast.Attr, got %T", attr)
+		return nil, errors.Errorf("invalid attribute type; expected *ast.Attr, got %T", attr)
 	}
 	return []*ast.Attr{a}, nil
 }
@@ -166,11 +166,11 @@ func NewAttrList(attr interface{}) ([]*ast.Attr, error) {
 func AppendAttr(list, attr interface{}) ([]*ast.Attr, error) {
 	l, ok := list.([]*ast.Attr)
 	if !ok {
-		return nil, errutil.Newf("invalid attribute list type; expected []*ast.Attr, got %T", list)
+		return nil, errors.Errorf("invalid attribute list type; expected []*ast.Attr, got %T", list)
 	}
 	a, ok := attr.(*ast.Attr)
 	if !ok {
-		return nil, errutil.Newf("invalid attribute type; expected *ast.Attr, got %T", attr)
+		return nil, errors.Errorf("invalid attribute type; expected *ast.Attr, got %T", attr)
 	}
 	return append(l, a), nil
 }
@@ -180,11 +180,11 @@ func AppendAttr(list, attr interface{}) ([]*ast.Attr, error) {
 func AppendAttrList(optList, optAttrs interface{}) ([]*ast.Attr, error) {
 	l, ok := optList.([]*ast.Attr)
 	if optList != nil && !ok {
-		return nil, errutil.Newf("invalid attribute list type; expected []*ast.Attr or nil, got %T", optList)
+		return nil, errors.Errorf("invalid attribute list type; expected []*ast.Attr or nil, got %T", optList)
 	}
 	as, ok := optAttrs.([]*ast.Attr)
 	if optAttrs != nil && !ok {
-		return nil, errutil.Newf("invalid attributes type; expected []*ast.Attr or nil, got %T", optAttrs)
+		return nil, errors.Errorf("invalid attributes type; expected []*ast.Attr or nil, got %T", optAttrs)
 	}
 	return append(l, as...), nil
 }
@@ -195,11 +195,11 @@ func AppendAttrList(optList, optAttrs interface{}) ([]*ast.Attr, error) {
 func NewAttr(key, val interface{}) (*ast.Attr, error) {
 	k, ok := key.(string)
 	if !ok {
-		return nil, errutil.Newf("invalid key type; expected string, got %T", key)
+		return nil, errors.Errorf("invalid key type; expected string, got %T", key)
 	}
 	v, ok := val.(string)
 	if !ok {
-		return nil, errutil.Newf("invalid value type; expected string, got %T", val)
+		return nil, errors.Errorf("invalid value type; expected string, got %T", val)
 	}
 	return &ast.Attr{Key: k, Val: v}, nil
 }
@@ -211,11 +211,11 @@ func NewAttr(key, val interface{}) (*ast.Attr, error) {
 func NewSubgraph(optID, optStmts interface{}) (*ast.Subgraph, error) {
 	i, ok := optID.(string)
 	if optID != nil && !ok {
-		return nil, errutil.Newf("invalid ID type; expected string or nil, got %T", optID)
+		return nil, errors.Errorf("invalid ID type; expected string or nil, got %T", optID)
 	}
 	ss, ok := optStmts.([]ast.Stmt)
 	if optStmts != nil && !ok {
-		return nil, errutil.Newf("invalid statements type; expected []ast.Stmt or nil, got %T", optStmts)
+		return nil, errors.Errorf("invalid statements type; expected []ast.Stmt or nil, got %T", optStmts)
 	}
 	return &ast.Subgraph{ID: i, Stmts: ss}, nil
 }
@@ -228,11 +228,11 @@ func NewSubgraph(optID, optStmts interface{}) (*ast.Subgraph, error) {
 func NewNode(id, optPort interface{}) (*ast.Node, error) {
 	i, ok := id.(string)
 	if !ok {
-		return nil, errutil.Newf("invalid ID type; expected string, got %T", id)
+		return nil, errors.Errorf("invalid ID type; expected string, got %T", id)
 	}
 	p, ok := optPort.(*ast.Port)
 	if optPort != nil && !ok {
-		return nil, errutil.Newf("invalid port type; expected *ast.Port or nil, got %T", optPort)
+		return nil, errors.Errorf("invalid port type; expected *ast.Port or nil, got %T", optPort)
 	}
 	return &ast.Node{ID: i, Port: p}, nil
 }
@@ -247,7 +247,7 @@ func NewPort(id, optCompassPoint interface{}) (*ast.Port, error) {
 	//    "n", "ne", "e", "se", "s", "sw", "w", "nw", "c" and "_"
 	i, ok := id.(string)
 	if !ok {
-		return nil, errutil.Newf("invalid ID type; expected string, got %T", id)
+		return nil, errors.Errorf("invalid ID type; expected string, got %T", id)
 	}
 
 	// Early return if optional compass point is absent and ID is a valid compass
@@ -260,7 +260,7 @@ func NewPort(id, optCompassPoint interface{}) (*ast.Port, error) {
 
 	c, ok := optCompassPoint.(string)
 	if optCompassPoint != nil && !ok {
-		return nil, errutil.Newf("invalid compass point type; expected string or nil, got %T", optCompassPoint)
+		return nil, errors.Errorf("invalid compass point type; expected string or nil, got %T", optCompassPoint)
 	}
 	compassPoint, _ := getCompassPoint(c)
 	return &ast.Port{ID: i, CompassPoint: compassPoint}, nil
@@ -300,7 +300,7 @@ func getCompassPoint(s string) (ast.CompassPoint, bool) {
 func NewID(id interface{}) (string, error) {
 	i, ok := id.(*token.Token)
 	if !ok {
-		return "", errutil.Newf("invalid identifier type; expected *token.Token, got %T", id)
+		return "", errors.Errorf("invalid identifier type; expected *token.Token, got %T", id)
 	}
 	s := string(i.Lit)
 

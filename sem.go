@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/graphism/dot/ast"
-	"github.com/mewkiz/pkg/errutil"
+	"github.com/pkg/errors"
 )
 
 // check validates the semantics of the given DOT file.
@@ -12,7 +12,7 @@ func check(file *ast.File) error {
 	for _, graph := range file.Graphs {
 		// TODO: Check graph.ID for duplicates?
 		if err := checkGraph(graph); err != nil {
-			return errutil.Err(err)
+			return errors.WithStack(err)
 		}
 	}
 	return nil
@@ -22,7 +22,7 @@ func check(file *ast.File) error {
 func checkGraph(graph *ast.Graph) error {
 	for _, stmt := range graph.Stmts {
 		if err := checkStmt(graph, stmt); err != nil {
-			return errutil.Err(err)
+			return errors.WithStack(err)
 		}
 	}
 	return nil
@@ -50,12 +50,12 @@ func checkStmt(graph *ast.Graph, stmt ast.Stmt) error {
 // checkNodeStmt validates the semantics of the given node statement.
 func checkNodeStmt(graph *ast.Graph, stmt *ast.NodeStmt) error {
 	if err := checkNode(graph, stmt.Node); err != nil {
-		return errutil.Err(err)
+		return errors.WithStack(err)
 	}
 	for _, attr := range stmt.Attrs {
 		// TODO: Verify that the attribute is indeed of node component kind.
 		if err := checkAttr(graph, ast.KindNode, attr); err != nil {
-			return errutil.Err(err)
+			return errors.WithStack(err)
 		}
 	}
 	return nil
@@ -65,12 +65,12 @@ func checkNodeStmt(graph *ast.Graph, stmt *ast.NodeStmt) error {
 func checkEdgeStmt(graph *ast.Graph, stmt *ast.EdgeStmt) error {
 	// TODO: if graph.Strict, check for multi-edges.
 	if err := checkVertex(graph, stmt.From); err != nil {
-		return errutil.Err(err)
+		return errors.WithStack(err)
 	}
 	for _, attr := range stmt.Attrs {
 		// TODO: Verify that the attribute is indeed of edge component kind.
 		if err := checkAttr(graph, ast.KindEdge, attr); err != nil {
-			return errutil.Err(err)
+			return errors.WithStack(err)
 		}
 	}
 	return checkEdge(graph, stmt.From, stmt.To)
@@ -79,10 +79,10 @@ func checkEdgeStmt(graph *ast.Graph, stmt *ast.EdgeStmt) error {
 // checkEdge validates the semantics of the given edge.
 func checkEdge(graph *ast.Graph, from ast.Vertex, to *ast.Edge) error {
 	if !graph.Directed && to.Directed {
-		return errutil.Newf("undirected graph %q contains directed edge from %q to %q", graph.ID, from, to.Vertex)
+		return errors.Errorf("undirected graph %q contains directed edge from %q to %q", graph.ID, from, to.Vertex)
 	}
 	if err := checkVertex(graph, to.Vertex); err != nil {
-		return errutil.Err(err)
+		return errors.WithStack(err)
 	}
 	if to.To != nil {
 		return checkEdge(graph, to.Vertex, to.To)
@@ -94,7 +94,7 @@ func checkEdge(graph *ast.Graph, from ast.Vertex, to *ast.Edge) error {
 func checkAttrStmt(graph *ast.Graph, stmt *ast.AttrStmt) error {
 	for _, attr := range stmt.Attrs {
 		if err := checkAttr(graph, stmt.Kind, attr); err != nil {
-			return errutil.Err(err)
+			return errors.WithStack(err)
 		}
 	}
 	return nil
@@ -125,7 +125,7 @@ func checkSubgraph(graph *ast.Graph, subgraph *ast.Subgraph) error {
 		// TODO: Refine handling of subgraph statements?
 		//    checkSubgraphStmt(graph, subgraph, stmt)
 		if err := checkStmt(graph, stmt); err != nil {
-			return errutil.Err(err)
+			return errors.WithStack(err)
 		}
 	}
 	return nil
