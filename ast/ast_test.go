@@ -14,40 +14,40 @@ func TestParseFile(t *testing.T) {
 		in  string
 		out string
 	}{
-		{in: "../internal/parser/testdata/empty.dot"},
-		{in: "../internal/parser/testdata/graph.dot"},
-		{in: "../internal/parser/testdata/digraph.dot"},
-		{in: "../internal/parser/testdata/strict.dot"},
-		{in: "../internal/parser/testdata/multi.dot"},
-		{in: "../internal/parser/testdata/named_graph.dot"},
-		{in: "../internal/parser/testdata/node_stmt.dot"},
-		{in: "../internal/parser/testdata/edge_stmt.dot"},
-		{in: "../internal/parser/testdata/attr_stmt.dot"},
-		{in: "../internal/parser/testdata/attr.dot"},
+		{in: "../internal/testdata/empty.dot"},
+		{in: "../internal/testdata/graph.dot"},
+		{in: "../internal/testdata/digraph.dot"},
+		{in: "../internal/testdata/strict.dot"},
+		{in: "../internal/testdata/multi.dot"},
+		{in: "../internal/testdata/named_graph.dot"},
+		{in: "../internal/testdata/node_stmt.dot"},
+		{in: "../internal/testdata/edge_stmt.dot"},
+		{in: "../internal/testdata/attr_stmt.dot"},
+		{in: "../internal/testdata/attr.dot"},
 		{
-			in:  "../internal/parser/testdata/subgraph.dot",
-			out: "../internal/parser/testdata/subgraph.golden",
+			in:  "../internal/testdata/subgraph.dot",
+			out: "../internal/testdata/subgraph.golden",
 		},
 		{
-			in:  "../internal/parser/testdata/semi.dot",
-			out: "../internal/parser/testdata/semi.golden",
+			in:  "../internal/testdata/semi.dot",
+			out: "../internal/testdata/semi.golden",
 		},
 		{
-			in:  "../internal/parser/testdata/empty_attr.dot",
-			out: "../internal/parser/testdata/empty_attr.golden",
+			in:  "../internal/testdata/empty_attr.dot",
+			out: "../internal/testdata/empty_attr.golden",
 		},
 		{
-			in:  "../internal/parser/testdata/attr_lists.dot",
-			out: "../internal/parser/testdata/attr_lists.golden",
+			in:  "../internal/testdata/attr_lists.dot",
+			out: "../internal/testdata/attr_lists.golden",
 		},
 		{
-			in:  "../internal/parser/testdata/attr_sep.dot",
-			out: "../internal/parser/testdata/attr_sep.golden",
+			in:  "../internal/testdata/attr_sep.dot",
+			out: "../internal/testdata/attr_sep.golden",
 		},
-		{in: "../internal/parser/testdata/subgraph_vertex.dot"},
+		{in: "../internal/testdata/subgraph_vertex.dot"},
 		{
-			in:  "../internal/parser/testdata/port.dot",
-			out: "../internal/parser/testdata/port.golden",
+			in:  "../internal/testdata/port.dot",
+			out: "../internal/testdata/port.golden",
 		},
 	}
 	for _, g := range golden {

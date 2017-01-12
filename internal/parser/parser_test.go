@@ -13,40 +13,45 @@ func TestParseFile(t *testing.T) {
 		in  string
 		out string
 	}{
-		{in: "testdata/empty.dot"},
-		{in: "testdata/graph.dot"},
-		{in: "testdata/digraph.dot"},
-		{in: "testdata/strict.dot"},
-		{in: "testdata/multi.dot"},
-		{in: "testdata/named_graph.dot"},
-		{in: "testdata/node_stmt.dot"},
-		{in: "testdata/edge_stmt.dot"},
-		{in: "testdata/attr_stmt.dot"},
-		{in: "testdata/attr.dot"},
+		{in: "../testdata/empty.dot"},
+		{in: "../testdata/graph.dot"},
+		{in: "../testdata/digraph.dot"},
+		{in: "../testdata/strict.dot"},
+		{in: "../testdata/multi.dot"},
+		{in: "../testdata/named_graph.dot"},
+		{in: "../testdata/node_stmt.dot"},
+		{in: "../testdata/edge_stmt.dot"},
+		{in: "../testdata/attr_stmt.dot"},
+		{in: "../testdata/attr.dot"},
 		{
-			in:  "testdata/subgraph.dot",
-			out: "testdata/subgraph.golden",
+			in:  "../testdata/subgraph.dot",
+			out: "../testdata/subgraph.golden",
 		},
 		{
-			in:  "testdata/semi.dot",
-			out: "testdata/semi.golden",
+			in:  "../testdata/semi.dot",
+			out: "../testdata/semi.golden",
 		},
 		{
-			in:  "testdata/empty_attr.dot",
-			out: "testdata/empty_attr.golden",
+			in:  "../testdata/empty_attr.dot",
+			out: "../testdata/empty_attr.golden",
 		},
 		{
-			in:  "testdata/attr_lists.dot",
-			out: "testdata/attr_lists.golden",
+			in:  "../testdata/attr_lists.dot",
+			out: "../testdata/attr_lists.golden",
 		},
 		{
-			in:  "testdata/attr_sep.dot",
-			out: "testdata/attr_sep.golden",
+			in:  "../testdata/attr_sep.dot",
+			out: "../testdata/attr_sep.golden",
 		},
-		{in: "testdata/subgraph_vertex.dot"},
+		{in: "../testdata/subgraph_vertex.dot"},
 		{
-			in:  "testdata/port.dot",
-			out: "testdata/port.golden",
+			in:  "../testdata/port.dot",
+			out: "../testdata/port.golden",
+		},
+		{in: "../testdata/quoted_id.dot"},
+		{
+			in:  "../testdata/backslash_newline_id.dot",
+			out: "../testdata/backslash_newline_id.golden",
 		},
 	}
 	for _, g := range golden {
@@ -69,7 +74,7 @@ func TestParseFile(t *testing.T) {
 		// Remove trailing newline.
 		want := string(bytes.TrimSpace(buf))
 		if got != want {
-			t.Errorf("%q: graph mismatch; expected %q, got %q", g.in, want, got)
+			t.Errorf("%q: graph mismatch; expected `%s`, got `%s`", g.in, want, got)
 		}
 	}
 }
