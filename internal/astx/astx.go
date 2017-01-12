@@ -48,15 +48,15 @@ func NewGraph(strict, directed, optID, optStmts interface{}) (*ast.Graph, error)
 	if !ok {
 		return nil, errors.Errorf("invalid direction type; expected bool, got %T", directed)
 	}
-	i, ok := optID.(string)
+	id, ok := optID.(string)
 	if optID != nil && !ok {
 		return nil, errors.Errorf("invalid ID type; expected string or nil, got %T", optID)
 	}
-	ss, ok := optStmts.([]ast.Stmt)
+	stmts, ok := optStmts.([]ast.Stmt)
 	if optStmts != nil && !ok {
 		return nil, errors.Errorf("invalid statements type; expected []ast.Stmt or nil, got %T", optStmts)
 	}
-	return &ast.Graph{Strict: s, Directed: d, ID: i, Stmts: ss}, nil
+	return &ast.Graph{Strict: s, Directed: d, ID: id, Stmts: stmts}, nil
 }
 
 // === [ Statements ] ==========================================================
@@ -92,11 +92,11 @@ func NewNodeStmt(node, optAttrs interface{}) (*ast.NodeStmt, error) {
 	if !ok {
 		return nil, errors.Errorf("invalid node type; expected *ast.Node, got %T", node)
 	}
-	as, ok := optAttrs.([]*ast.Attr)
+	attrs, ok := optAttrs.([]*ast.Attr)
 	if optAttrs != nil && !ok {
 		return nil, errors.Errorf("invalid attributes type; expected []*ast.Attr or nil, got %T", optAttrs)
 	}
-	return &ast.NodeStmt{Node: n, Attrs: as}, nil
+	return &ast.NodeStmt{Node: n, Attrs: attrs}, nil
 }
 
 // --- [ Edge statement ] ------------------------------------------------------
@@ -112,11 +112,11 @@ func NewEdgeStmt(from, to, optAttrs interface{}) (*ast.EdgeStmt, error) {
 	if !ok {
 		return nil, errors.Errorf("invalid outgoing edge type; expected *ast.Edge, got %T", to)
 	}
-	as, ok := optAttrs.([]*ast.Attr)
+	attrs, ok := optAttrs.([]*ast.Attr)
 	if optAttrs != nil && !ok {
 		return nil, errors.Errorf("invalid attributes type; expected []*ast.Attr or nil, got %T", optAttrs)
 	}
-	return &ast.EdgeStmt{From: f, To: t, Attrs: as}, nil
+	return &ast.EdgeStmt{From: f, To: t, Attrs: attrs}, nil
 }
 
 // NewEdge returns a new edge based on the given edge direction, destination
@@ -130,11 +130,11 @@ func NewEdge(directed, vertex, optTo interface{}) (*ast.Edge, error) {
 	if !ok {
 		return nil, errors.Errorf("invalid destination vertex type; expected ast.Vertex, got %T", vertex)
 	}
-	t, ok := optTo.(*ast.Edge)
+	to, ok := optTo.(*ast.Edge)
 	if optTo != nil && !ok {
 		return nil, errors.Errorf("invalid outgoing edge type; expected *ast.Edge or nil, got %T", optTo)
 	}
-	return &ast.Edge{Directed: d, Vertex: v, To: t}, nil
+	return &ast.Edge{Directed: d, Vertex: v, To: to}, nil
 }
 
 // --- [ Attribute statement ] -------------------------------------------------
@@ -146,11 +146,11 @@ func NewAttrStmt(kind, optAttrs interface{}) (*ast.AttrStmt, error) {
 	if !ok {
 		return nil, errors.Errorf("invalid graph component kind type; expected ast.Kind, got %T", kind)
 	}
-	as, ok := optAttrs.([]*ast.Attr)
+	attrs, ok := optAttrs.([]*ast.Attr)
 	if optAttrs != nil && !ok {
 		return nil, errors.Errorf("invalid attributes type; expected []*ast.Attr or nil, got %T", optAttrs)
 	}
-	return &ast.AttrStmt{Kind: k, Attrs: as}, nil
+	return &ast.AttrStmt{Kind: k, Attrs: attrs}, nil
 }
 
 // NewAttrList returns a new attribute list based on the given attribute.
@@ -178,15 +178,15 @@ func AppendAttr(list, attr interface{}) ([]*ast.Attr, error) {
 // AppendAttrList appends the optional attrs to the given optional attribute
 // list.
 func AppendAttrList(optList, optAttrs interface{}) ([]*ast.Attr, error) {
-	l, ok := optList.([]*ast.Attr)
+	list, ok := optList.([]*ast.Attr)
 	if optList != nil && !ok {
 		return nil, errors.Errorf("invalid attribute list type; expected []*ast.Attr or nil, got %T", optList)
 	}
-	as, ok := optAttrs.([]*ast.Attr)
+	attrs, ok := optAttrs.([]*ast.Attr)
 	if optAttrs != nil && !ok {
 		return nil, errors.Errorf("invalid attributes type; expected []*ast.Attr or nil, got %T", optAttrs)
 	}
-	return append(l, as...), nil
+	return append(list, attrs...), nil
 }
 
 // --- [ Attribute ] -----------------------------------------------------------
@@ -209,15 +209,15 @@ func NewAttr(key, val interface{}) (*ast.Attr, error) {
 // NewSubgraph returns a new subgraph based on the given optional subgraph ID
 // and optional statements.
 func NewSubgraph(optID, optStmts interface{}) (*ast.Subgraph, error) {
-	i, ok := optID.(string)
+	id, ok := optID.(string)
 	if optID != nil && !ok {
 		return nil, errors.Errorf("invalid ID type; expected string or nil, got %T", optID)
 	}
-	ss, ok := optStmts.([]ast.Stmt)
+	stmts, ok := optStmts.([]ast.Stmt)
 	if optStmts != nil && !ok {
 		return nil, errors.Errorf("invalid statements type; expected []ast.Stmt or nil, got %T", optStmts)
 	}
-	return &ast.Subgraph{ID: i, Stmts: ss}, nil
+	return &ast.Subgraph{ID: id, Stmts: stmts}, nil
 }
 
 // === [ Vertices ] ============================================================
@@ -230,11 +230,11 @@ func NewNode(id, optPort interface{}) (*ast.Node, error) {
 	if !ok {
 		return nil, errors.Errorf("invalid ID type; expected string, got %T", id)
 	}
-	p, ok := optPort.(*ast.Port)
+	port, ok := optPort.(*ast.Port)
 	if optPort != nil && !ok {
 		return nil, errors.Errorf("invalid port type; expected *ast.Port or nil, got %T", optPort)
 	}
-	return &ast.Node{ID: i, Port: p}, nil
+	return &ast.Node{ID: i, Port: port}, nil
 }
 
 // NewPort returns a new port based on the given id and optional compass point.
