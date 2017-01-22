@@ -1,13 +1,16 @@
 gen: dot.bnf
 	gocc $<
+	# TODO: Remove once https://github.com/goccmack/gocc/issues/36 gets resolved.
 	find . -type f -name '*.go' | xargs goimports -w
 
 debug_lexer: dot.bnf
 	gocc -debug_lexer -v -a $<
+	# TODO: Remove once https://github.com/goccmack/gocc/issues/36 gets resolved.
 	find . -type f -name '*.go' | xargs goimports -w
 
 debug_parser: dot.bnf
 	gocc -debug_parser -v -a $<
+	# TODO: Remove once https://github.com/goccmack/gocc/issues/36 gets resolved.
 	find . -type f -name '*.go' | xargs goimports -w
 
 clean:

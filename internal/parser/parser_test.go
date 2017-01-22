@@ -78,3 +78,27 @@ func TestParseFile(t *testing.T) {
 		}
 	}
 }
+
+func TestParseError(t *testing.T) {
+	golden := []struct {
+		path string
+		want string
+	}{
+		{
+			path: "../testdata/error.dot",
+			want: `Error in S30: INVALID(0,~), Pos(offset=13, line=2, column=7), expected one of: { } graphx ; -- -> node edge [ = subgraph : id `,
+		},
+	}
+	for _, g := range golden {
+		_, err := dot.ParseFile(g.path)
+		if err == nil {
+			t.Errorf("%q: expected error, got nil", g.path)
+			continue
+		}
+		got := err.Error()
+		if got != g.want {
+			t.Errorf("%q: error mismatch; expected `%v`, got `%v`", g.path, g.want, got)
+			continue
+		}
+	}
+}
