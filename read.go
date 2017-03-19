@@ -2,15 +2,33 @@ package dot
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/gonum/graph"
-	"github.com/gonum/graph/simple"
 	"github.com/graphism/dot/ast"
 )
 
+// DirectedBuilder is a directed graph builder capable of handling user-defined
+// node and edge types.
+type DirectedBuilder interface {
+	graph.DirectedBuilder
+	// NewNode returns a new node with a unique node ID in the graph.
+	NewNode() graph.Node
+	// NewEdge returns a new edge from the source to the destination node in the
+	// graph, or the existing edge if already present.
+	NewEdge(from, to graph.Node) graph.Edge
+}
+
+// UnmarshalerAttr is the interface implemented by objects that can unmarshal a
+// DOT attribute description of themselves.
+type UnmarshalerAttr interface {
+	// UnmarshalDOTAttr decodes a single DOT attribute.
+	UnmarshalDOTAttr(attr *ast.Attr) error
+}
+
 // CopyDirected copies the nodes and edges from the AST of the directed source
 // graph to the destination graph.
-func CopyDirected(dst graph.DirectedBuilder, src *ast.Graph) {
+func CopyDirected(dst DirectedBuilder, src *ast.Graph) {
 	if !src.Directed {
 		panic("invalid source graph; undirected")
 	}
@@ -37,13 +55,12 @@ type generator struct {
 
 // node returns the gonum node corresponding to the given dot AST node ID,
 // generating a new such node if none exist.
-func (gen *generator) node(dst graph.DirectedBuilder, id string) graph.Node {
+func (gen *generator) node(dst DirectedBuilder, id string) graph.Node {
 	if n, ok := gen.ids[id]; ok {
 		return n
 	}
-	n := simple.Node(dst.NewNodeID())
+	n := dst.NewNode()
 	gen.ids[id] = n
-	dst.AddNode(n)
 	// Check if within the context of a subgraph, that is to be used as a vertex
 	// of an edge.
 	if gen.isInSubgraph() {
@@ -56,21 +73,27 @@ func (gen *generator) node(dst graph.DirectedBuilder, id string) graph.Node {
 
 // edge returns the gonum edge from the source to the destination node,
 // generating a new such edge if none exist.
-func (gen *generator) edge(dst graph.DirectedBuilder, from, to graph.Node) graph.Edge {
+func (gen *generator) edge(dst DirectedBuilder, from, to graph.Node) graph.Edge {
 	if e := dst.Edge(from, to); e != nil {
 		return e
 	}
-	// TODO: Figure out if weight is needed.
-	e := simple.Edge{F: from, T: to, W: 1}
+	e := dst.NewEdge(from, to)
 	dst.SetEdge(e)
 	return e
 }
 
 // addStmt adds the given statement to the graph.
-func (gen *generator) addStmt(dst graph.DirectedBuilder, stmt ast.Stmt) {
+func (gen *generator) addStmt(dst DirectedBuilder, stmt ast.Stmt) {
 	switch stmt := stmt.(type) {
 	case *ast.NodeStmt:
-		gen.node(dst, stmt.Node.ID)
+		n := gen.node(dst, stmt.Node.ID)
+		if n, ok := n.(UnmarshalerAttr); ok {
+			for _, attr := range stmt.Attrs {
+				if err := n.UnmarshalDOTAttr(attr); err != nil {
+					log.Printf("unable to unmarshal DOT attribute %#v; %v", attr, err)
+				}
+			}
+		}
 	case *ast.EdgeStmt:
 		gen.addEdgeStmt(dst, stmt)
 	case *ast.AttrStmt:
@@ -87,18 +110,26 @@ func (gen *generator) addStmt(dst graph.DirectedBuilder, stmt ast.Stmt) {
 }
 
 // addEdgeStmt adds the given edge statement to the graph.
-func (gen *generator) addEdgeStmt(dst graph.DirectedBuilder, e *ast.EdgeStmt) {
+func (gen *generator) addEdgeStmt(dst DirectedBuilder, e *ast.EdgeStmt) {
 	fs := gen.addVertex(dst, e.From)
 	ts := gen.addEdge(dst, e.To)
 	for _, f := range fs {
 		for _, t := range ts {
-			gen.edge(dst, f, t)
+			edge := gen.edge(dst, f, t)
+			if edge, ok := edge.(UnmarshalerAttr); ok {
+				for _, attr := range e.Attrs {
+					if err := edge.UnmarshalDOTAttr(attr); err != nil {
+						log.Printf("unable to unmarshal DOT attribute %#v; %v", attr, err)
+					}
+				}
+			}
+
 		}
 	}
 }
 
 // addVertex adds the given vertex to the graph, and returns its set of nodes.
-func (gen *generator) addVertex(dst graph.DirectedBuilder, v ast.Vertex) []graph.Node {
+func (gen *generator) addVertex(dst DirectedBuilder, v ast.Vertex) []graph.Node {
 	switch v := v.(type) {
 	case *ast.Node:
 		n := gen.node(dst, v.ID)
@@ -115,7 +146,7 @@ func (gen *generator) addVertex(dst graph.DirectedBuilder, v ast.Vertex) []graph
 }
 
 // addEdge adds the given edge to the graph, and returns its set of nodes.
-func (gen *generator) addEdge(dst graph.DirectedBuilder, to *ast.Edge) []graph.Node {
+func (gen *generator) addEdge(dst DirectedBuilder, to *ast.Edge) []graph.Node {
 	// TODO: Handle to.Directed.
 	fs := gen.addVertex(dst, to.Vertex)
 	if to.To != nil {
