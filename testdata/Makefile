@@ -1,3 +1,14 @@
+# Dependencies:
+#
+# * imgcmp
+#    go get github.com/mewkiz/cmd/imgcmp
+# * dotfmt
+#    go get github.com/graphism/dot/cmd/dotfmt
+# * dot
+#    sudo pacman -S graphviz
+# * recode
+#    sudo pacman -S recode
+
 DOT=$(wildcard *.dot)
 
 # Skip DOT files for which the generated PNG images mismatch.
