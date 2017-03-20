@@ -10,13 +10,13 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"log"
 	"os"
 
+	"github.com/gonum/graph"
+	"github.com/gonum/graph/encoding/dot"
 	"github.com/gonum/graph/simple"
-	"github.com/graphism/dot"
-	"github.com/graphism/dot/ast"
+	dotparser "github.com/graphism/dot"
 	"github.com/pkg/errors"
 )
 
@@ -47,7 +47,7 @@ func main() {
 // information.
 func flow(path, output string, inplace bool) error {
 	// Parse input file.
-	file, err := dot.ParseFile(path)
+	file, err := dotparser.ParseFile(path)
 	if err != nil {
 		return errors.WithStack(err)
 	}
@@ -58,10 +58,15 @@ func flow(path, output string, inplace bool) error {
 	// Convert back and forth to gonum, thus stripping all non-essential
 	// information.
 	src := file.Graphs[0]
-	dst := simple.NewDirectedGraph(1, 1)
-	dot.CopyDirected(dst, src)
-	graph := dot.NewGraph(dst)
-	file = &ast.File{Graphs: []*ast.Graph{graph}}
+	dst := newDirectedGraph()
+	if dot.Copy(dst, src); err != nil {
+		return errors.WithStack(err)
+	}
+	buf, err := dot.Marshal(dst, src.ID, "", "\t", false)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	buf = append(buf, '\n')
 
 	// Write to standard output.
 	w := os.Stdout
@@ -82,9 +87,39 @@ func flow(path, output string, inplace bool) error {
 	}
 
 	// Write to output stream.
-	if _, err := fmt.Fprintln(w, file); err != nil {
+	if _, err := w.Write(buf); err != nil {
 		return errors.WithStack(err)
 	}
 
 	return nil
+}
+
+// directedGraph extends simple.DirectedGraph with NewNode and NewEdge methods
+// to provide DOT decoding support.
+type directedGraph struct {
+	*simple.DirectedGraph
+}
+
+func newDirectedGraph() *directedGraph {
+	return &directedGraph{
+		DirectedGraph: simple.NewDirectedGraph(0, 0),
+	}
+}
+
+// NewNode adds a new node with a unique node ID to the graph.
+func (g *directedGraph) NewNode() graph.Node {
+	n := simple.Node(g.NewNodeID())
+	g.AddNode(n)
+	return n
+}
+
+// NewEdge adds a new edge from the source to the destination node to the graph,
+// or returns the existing edge if already present.
+func (g *directedGraph) NewEdge(from, to graph.Node) graph.Edge {
+	if e := g.Edge(from, to); e != nil {
+		return e
+	}
+	e := simple.Edge{F: from, T: to}
+	g.SetEdge(e)
+	return e
 }
