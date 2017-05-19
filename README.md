@@ -1,4 +1,4 @@
-# New project home!
+# NOTICE: New project home!
 
 The DOT parser has been merged with the gonum graph project (see [graphism/dot#8](https://github.com/graphism/dot/issues/8)).
 
