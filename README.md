@@ -2,7 +2,7 @@
 
 The DOT parser has been merged with the gonum graph project (see [graphism/dot#8](https://github.com/graphism/dot/issues/8)).
 
-For active development, the new home of `graphism/dot` is the `gonum/graph` repository, under the import path `formats/dot`.
+For active development, the new home of `graphism/dot` is the [gonum/graph](https://github.com/gonum/graph) repository, under the import path `formats/dot`.
 
 ```diff
 -import "github.com/graphism/dot"
