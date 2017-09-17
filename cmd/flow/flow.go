@@ -10,14 +10,17 @@ package main
 
 import (
 	"flag"
+	"io/ioutil"
 	"log"
 	"os"
+	"strconv"
+	"strings"
 
-	"github.com/gonum/graph"
-	"github.com/gonum/graph/encoding/dot"
-	"github.com/gonum/graph/simple"
-	dotparser "github.com/graphism/dot"
+	"github.com/graphism/simple"
 	"github.com/pkg/errors"
+	"gonum.org/v1/gonum/graph"
+	"gonum.org/v1/gonum/graph/encoding"
+	"gonum.org/v1/gonum/graph/encoding/dot"
 )
 
 func main() {
@@ -47,22 +50,21 @@ func main() {
 // information.
 func flow(path, output string, inplace bool) error {
 	// Parse input file.
-	file, err := dotparser.ParseFile(path)
+	input, err := ioutil.ReadFile(path)
 	if err != nil {
 		return errors.WithStack(err)
 	}
-	if len(file.Graphs) != 1 {
-		return errors.Errorf("invalid number of graphs in %q; expected 1, got %d", path, len(file.Graphs))
+	g := NewGraph()
+	if err := dot.Unmarshal(input, g); err != nil {
+		return errors.WithStack(err)
 	}
 
 	// Convert back and forth to gonum, thus stripping all non-essential
 	// information.
-	src := file.Graphs[0]
-	dst := newDirectedGraph()
-	if dot.Copy(dst, src); err != nil {
-		return errors.WithStack(err)
-	}
-	buf, err := dot.Marshal(dst, src.ID, "", "\t", false)
+	// TODO: Strip non-essential information.
+
+	// Output graph.
+	buf, err := dot.Marshal(g, g.DOTID(), "", "\t", false)
 	if err != nil {
 		return errors.WithStack(err)
 	}
@@ -90,36 +92,121 @@ func flow(path, output string, inplace bool) error {
 	if _, err := w.Write(buf); err != nil {
 		return errors.WithStack(err)
 	}
-
 	return nil
 }
 
-// directedGraph extends simple.DirectedGraph with NewNode and NewEdge methods
-// to provide DOT decoding support.
-type directedGraph struct {
+// Graph represents a control flow graph.
+type Graph struct {
 	*simple.DirectedGraph
+	// Function name.
+	name string
 }
 
-func newDirectedGraph() *directedGraph {
-	return &directedGraph{
-		DirectedGraph: simple.NewDirectedGraph(0, 0),
+// NewGraph returns a new control flow graph.
+func NewGraph() *Graph {
+	return &Graph{
+		DirectedGraph: simple.NewDirectedGraph(),
 	}
 }
 
-// NewNode adds a new node with a unique node ID to the graph.
-func (g *directedGraph) NewNode() graph.Node {
-	n := simple.Node(g.NewNodeID())
-	g.AddNode(n)
-	return n
+// DOTID returns the DOT ID of the graph.
+func (g *Graph) DOTID() string {
+	return g.name
 }
 
-// NewEdge adds a new edge from the source to the destination node to the graph,
-// or returns the existing edge if already present.
-func (g *directedGraph) NewEdge(from, to graph.Node) graph.Edge {
-	if e := g.Edge(from, to); e != nil {
-		return e
+// SetDOTID sets the DOT ID of the graph.
+func (g *Graph) SetDOTID(id string) {
+	g.name = id
+}
+
+// Node represents a node of a control flow graph.
+type Node struct {
+	graph.Node
+	// Basic block label.
+	name string
+	// Entry basic block.
+	entry bool
+}
+
+// NewNode returns a new graph node with a unique arbitrary ID.
+func (g *Graph) NewNode() graph.Node {
+	return &Node{
+		Node: g.DirectedGraph.NewNode(),
 	}
-	e := simple.Edge{F: from, T: to}
-	g.SetEdge(e)
-	return e
+}
+
+// DOTID returns the DOT ID of the node.
+func (n *Node) DOTID() string {
+	return n.name
+}
+
+// SetDOTID sets the DOT ID of the node.
+func (n *Node) SetDOTID(id string) {
+	if id == "0" {
+		n.entry = true
+	}
+	n.name = id
+}
+
+// Attributes returns the DOT attributes of the node.
+func (n *Node) Attributes() []encoding.Attribute {
+	if n.entry {
+		return []encoding.Attribute{{Key: "label", Value: "entry"}}
+	}
+	return nil
+}
+
+// Edge represents an edge of a control flow graph.
+type Edge struct {
+	graph.Edge
+	// Edge label.
+	Label string
+}
+
+// NewEdge returns a new Edge from the source to the destination node.
+func (g *Graph) NewEdge(from, to graph.Node) graph.Edge {
+	return &Edge{
+		Edge: g.DirectedGraph.NewEdge(from, to),
+	}
+}
+
+// Attributes returns the attributes of the edge.
+func (e *Edge) Attributes() []encoding.Attribute {
+	if len(e.Label) > 0 {
+		val := e.Label
+		if !(strings.HasPrefix(val, `"`) && strings.HasSuffix(val, `"`)) && strings.ContainsAny(val, "\t ") {
+			val = strconv.Quote(val)
+		}
+		var attrs []encoding.Attribute
+		attrs = append(attrs, encoding.Attribute{Key: "label", Value: val})
+		switch val {
+		case "true":
+			attrs = append(attrs, encoding.Attribute{Key: "color", Value: "darkgreen"})
+		case "false":
+			attrs = append(attrs, encoding.Attribute{Key: "color", Value: "red"})
+		default:
+			// nothing to do.
+		}
+		return attrs
+	}
+	return nil
+}
+
+// SetAttribute sets the attribute of the edge.
+func (e *Edge) SetAttribute(attr encoding.Attribute) error {
+	switch attr.Key {
+	case "label":
+		val := attr.Value
+		if strings.HasPrefix(val, `"`) && strings.HasSuffix(val, `"`) {
+			s, err := strconv.Unquote(val)
+			if err != nil {
+				return errors.WithStack(err)
+			}
+			val = s
+		}
+		e.Label = val
+	default:
+		// ignore attribute.
+	}
+	return nil
 }
